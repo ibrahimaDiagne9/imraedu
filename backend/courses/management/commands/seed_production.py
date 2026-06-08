@@ -288,67 +288,8 @@ class Command(BaseCommand):
         else:
             self.stdout.write(self.style.WARNING('  [SKIP] Instructor already exists.'))
 
-        # 3. Seed courses
-        self.stdout.write(self.style.MIGRATE_HEADING('\n[*] Seeding courses...'))
-        for course_data in COURSES_DATA:
-            modules_data = course_data.pop('modules')
-            course, created = Course.objects.get_or_create(
-                title=course_data['title'],
-                defaults={
-                    **course_data,
-                    'instructor': instructor,
-                    'is_published': True,
-                }
-            )
-
-            if not created:
-                self.stdout.write(f'  [SKIP] "{course.title}" already exists.')
-                continue
-
-            self.stdout.write(self.style.SUCCESS(f'  [OK] Created course: "{course.title}"'))
-
-            for mod_idx, mod_data in enumerate(modules_data):
-                module = Module.objects.create(
-                    course=course,
-                    title=mod_data['title'],
-                    order=mod_idx,
-                )
-
-                for les_idx, les_data in enumerate(mod_data['lessons']):
-                    lesson = Lesson.objects.create(
-                        module=module,
-                        title=les_data['title'],
-                        lesson_type=les_data.get('lesson_type', 'video'),
-                        content_text=les_data.get('content_text', ''),
-                        duration=les_data.get('duration', ''),
-                        order=les_idx,
-                    )
-
-                    # Add quiz questions if applicable
-                    if les_data['title'] in QUIZ_DATA:
-                        for q_idx, q_data in enumerate(QUIZ_DATA[les_data['title']]):
-                            question = Question.objects.create(
-                                lesson=lesson,
-                                text=q_data['text'],
-                                order=q_idx,
-                            )
-                            for choice_text, is_correct in q_data['choices']:
-                                Choice.objects.create(
-                                    question=question,
-                                    text=choice_text,
-                                    is_correct=is_correct,
-                                )
-
-        total_courses = Course.objects.count()
-        total_modules = Module.objects.count()
-        total_lessons = Lesson.objects.count()
-        total_questions = Question.objects.count()
-
         self.stdout.write(self.style.SUCCESS(
-            f'\n=== Database Seeded Successfully ===\n'
-            f'  Courses:   {total_courses}\n'
-            f'  Modules:   {total_modules}\n'
-            f'  Lessons:   {total_lessons}\n'
-            f'  Questions: {total_questions}\n'
+            f'\n=== Database Initialized Successfully ===\n'
+            f'  Admin account created and ready for real data.\n'
         ))
 
