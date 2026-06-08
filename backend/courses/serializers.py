@@ -1,0 +1,132 @@
+from rest_framework import serializers
+from .models import User, Course, Module, Lesson, Question, Choice, Enrollment
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'bio', 'is_instructor']
+
+class RegisterSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password', 'first_name']
+
+    def create(self, validated_data):
+        user = User.objects.create_user(
+            username=validated_data['username'],
+            email=validated_data.get('email', ''),
+            password=validated_data['password'],
+            first_name=validated_data.get('first_name', '')
+        )
+        return user
+
+class ChoiceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Choice
+        fields = ['id', 'text', 'is_correct']
+
+class QuestionSerializer(serializers.ModelSerializer):
+    choices = ChoiceSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Question
+        fields = ['id', 'text', 'order', 'choices']
+
+class LessonSerializer(serializers.ModelSerializer):
+    questions = QuestionSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Lesson
+        fields = ['id', 'title', 'lesson_type', 'video_url', 'content_text', 'duration', 'order', 'questions']
+
+class LessonWriteSerializer(serializers.ModelSerializer):
+    """Used by instructors to create/update a lesson."""
+    class Meta:
+        model = Lesson
+        fields = ['id', 'module', 'title', 'lesson_type', 'video_url', 'content_text', 'duration', 'order']
+
+class QuestionWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Question
+        fields = ['id', 'lesson', 'text', 'order']
+
+class ChoiceWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Choice
+        fields = ['id', 'question', 'text', 'is_correct']
+
+class ModuleSerializer(serializers.ModelSerializer):
+    lessons = LessonSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Module
+        fields = ['id', 'title', 'order', 'lessons']
+
+class ModuleWriteSerializer(serializers.ModelSerializer):
+    """Used by instructors to create/update a module."""
+    class Meta:
+        model = Module
+        fields = ['id', 'course', 'title', 'order']
+
+class CourseSerializer(serializers.ModelSerializer):
+    modules = ModuleSerializer(many=True, read_only=True)
+    instructor_name = serializers.SerializerMethodField()
+    enrollment_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Course
+        fields = [
+            'id', 'title', 'provider', 'description', 'rating', 'reviews',
+            'level', 'duration', 'image_color', 'thumbnail_url',
+            'is_published', 'created_at', 'modules', 'instructor_name',
+            'enrollment_count'
+        ]
+
+    def get_instructor_name(self, obj):
+        if obj.instructor:
+            return obj.instructor.get_full_name() or obj.instructor.username
+        return ''
+
+    def get_enrollment_count(self, obj):
+        return obj.enrollments.count()
+
+class CourseWriteSerializer(serializers.ModelSerializer):
+    """Used by instructors to create/update a course."""
+    class Meta:
+        model = Course
+        fields = [
+            'id', 'title', 'provider', 'description', 'level',
+            'duration', 'image_color', 'thumbnail_url', 'is_published'
+        ]
+
+class EnrollmentSerializer(serializers.ModelSerializer):
+    course = CourseSerializer(read_only=True)
+
+    class Meta:
+        model = Enrollment
+        fields = ['id', 'course', 'progress_percentage', 'completed', 'enrolled_at']
+
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_decode
+
+class PasswordResetRequestSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+class PasswordResetConfirmSerializer(serializers.Serializer):
+    uidb64 = serializers.CharField()
+    token = serializers.CharField()
+    new_password = serializers.CharField(write_only=True)
+
+    def validate(self, attrs):
+        try:
+            uid = urlsafe_base64_decode(attrs['uidb64']).decode()
+            user = User.objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            raise serializers.ValidationError({"uidb64": "Invalid uidb64"})
+        
+        if not default_token_generator.check_token(user, attrs['token']):
+            raise serializers.ValidationError({"token": "Invalid or expired token"})
+            
+        return attrs
