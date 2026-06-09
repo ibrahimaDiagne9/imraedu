@@ -572,6 +572,22 @@ class InstructorApplicationView(APIView):
             serializer = InstructorApplicationSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save(user=request.user)
+                
+                # Send confirmation email
+                if request.user.email:
+                    try:
+                        from django.core.mail import send_mail
+                        from django.conf import settings
+                        send_mail(
+                            subject='Your Instructor Application has been received!',
+                            message=f'Hi {request.user.first_name or request.user.username},\n\nWe have received your application to become an instructor on ImraEdu. Our team will review your expertise and experience, and we will get back to you shortly.\n\nThank you for your interest in teaching with us!\n\nBest,\nThe ImraEdu Team',
+                            from_email=settings.DEFAULT_FROM_EMAIL,
+                            recipient_list=[request.user.email],
+                            fail_silently=True,
+                        )
+                    except Exception as e:
+                        print(f"Failed to send instructor application email: {e}")
+                        
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

@@ -1,4 +1,6 @@
 from rest_framework import serializers
+from django.core.mail import send_mail
+from django.conf import settings
 from .models import User, Course, Module, Lesson, Question, Choice, Enrollment, InstructorApplication, Review
 
 class InstructorApplicationSerializer(serializers.ModelSerializer):
@@ -38,6 +40,19 @@ class RegisterSerializer(serializers.ModelSerializer):
             password=validated_data['password'],
             first_name=validated_data.get('first_name', '')
         )
+        
+        if user.email:
+            try:
+                send_mail(
+                    subject='Welcome to ImraEdu!',
+                    message=f'Hi {user.first_name or user.username},\n\nWelcome to ImraEdu! We are thrilled to have you join our learning community.\n\nStart exploring our free courses today: {settings.FRONTEND_URL if hasattr(settings, "FRONTEND_URL") else "https://imraedu.com"}\n\nHappy Learning,\nThe ImraEdu Team',
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[user.email],
+                    fail_silently=True,
+                )
+            except Exception as e:
+                print(f"Failed to send welcome email: {e}")
+                
         return user
 
 class ChoiceSerializer(serializers.ModelSerializer):
