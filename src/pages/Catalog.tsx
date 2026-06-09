@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Search, Filter, SlidersHorizontal, BookOpen, X } from 'lucide-react';
 import CourseCard from '../components/CourseCard';
+import { CourseSkeleton } from '../components/Skeletons';
 import api from '../api';
 
 const fetchCourses = async () => {
@@ -151,7 +152,11 @@ const Catalog = () => {
           </div>
 
           {isLoading ? (
-            <div className="text-center py-3xl text-tertiary">Loading courses...</div>
+            <div className="grid grid-cols-3 gap-lg">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <CourseSkeleton key={i} />
+              ))}
+            </div>
           ) : isError ? (
             <div className="text-center py-3xl text-accent-red">Error loading courses. Please make sure the backend is running.</div>
           ) : filteredCourses.length > 0 ? (

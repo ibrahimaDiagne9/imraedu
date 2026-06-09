@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { PlayCircle, Award, Clock, BookOpen } from 'lucide-react';
+import { PlayCircle, Award, Clock, BookOpen, Compass } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { EnrollmentSkeleton } from '../components/Skeletons';
 import api from '../api';
 
 const fetchEnrollments = async () => {
@@ -45,17 +46,45 @@ const Dashboard = () => {
       <div className="dashboard-layout">
         <div>
           {isLoading ? (
-            <p className="text-secondary py-xl text-center">Loading your courses...</p>
+            <div className="flex-col gap-lg">
+              <EnrollmentSkeleton />
+              <EnrollmentSkeleton />
+              <EnrollmentSkeleton />
+            </div>
           ) : visibleEnrollments.length === 0 ? (
             <div style={{
-              textAlign: 'center', padding: '4rem 2rem',
-              backgroundColor: 'var(--bg-primary)', borderRadius: 'var(--radius-xl)',
-              border: '2px dashed var(--border-strong)'
+              textAlign: 'center', padding: '5rem 2rem',
+              background: 'linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%)',
+              borderRadius: 'var(--radius-xl)',
+              border: '1px solid var(--border-light)',
+              boxShadow: 'var(--shadow-sm)'
             }}>
-              <BookOpen size={48} style={{ color: 'var(--text-tertiary)', margin: '0 auto 1rem' }} />
-              <h3 className="text-h3 mb-sm">{activeTab === 'inProgress' ? 'No courses in progress' : 'No completed courses yet'}</h3>
-              <p className="text-secondary mb-lg">{activeTab === 'inProgress' ? 'Browse our catalog to find your first course!' : 'Keep learning to earn your first completion!'}</p>
-              {activeTab === 'inProgress' && <Link to="/catalog" className="btn btn-primary">Browse Catalog</Link>}
+              <div style={{
+                width: '80px', height: '80px', borderRadius: '50%',
+                background: 'linear-gradient(135deg, #0056D2, #0ea5e9)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                margin: '0 auto 1.5rem', boxShadow: '0 8px 24px rgba(0,86,210,0.25)'
+              }}>
+                <Compass size={40} color="white" />
+              </div>
+              <h3 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '0.75rem', letterSpacing: '-0.02em' }}>
+                {activeTab === 'inProgress' ? 'Your journey starts here' : 'No completed courses yet'}
+              </h3>
+              <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem', fontSize: '1rem', maxWidth: '400px', margin: '0 auto 2rem' }}>
+                {activeTab === 'inProgress' 
+                  ? 'Ready to learn something new? Explore our catalog of world-class courses and start growing today.' 
+                  : 'Keep learning to earn your first completion certificate!'}
+              </p>
+              {activeTab === 'inProgress' && (
+                <Link to="/catalog" style={{
+                  display: 'inline-flex', padding: '0.875rem 2rem',
+                  background: 'linear-gradient(135deg, #0056D2, #0ea5e9)',
+                  color: 'white', borderRadius: '12px', fontWeight: 700,
+                  boxShadow: '0 4px 15px rgba(0,86,210,0.3)', textDecoration: 'none'
+                }}>
+                  Explore Catalog
+                </Link>
+              )}
             </div>
           ) : (
             <div className="flex-col gap-lg">

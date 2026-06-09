@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import Hero from '../components/Hero';
 import CourseCard from '../components/CourseCard';
+import { CourseSkeleton } from '../components/Skeletons';
 import api from '../api';
 
 const fetchCourses = async () => {
@@ -27,7 +28,11 @@ const Home = () => {
           <Link to="/catalog" className="btn btn-ghost text-brand font-semibold">Show all</Link>
         </div>
         {isLoading ? (
-          <p className="text-secondary text-center py-xl">Loading courses...</p>
+          <div className="grid grid-cols-4 gap-xl">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <CourseSkeleton key={i} />
+            ))}
+          </div>
         ) : featured.length > 0 ? (
           <div className="grid grid-cols-4 gap-xl">
             {featured.map((course: any) => (
