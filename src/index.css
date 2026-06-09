@@ -109,6 +109,11 @@ ul {
 .text-inverse { color: var(--text-inverse); }
 .font-medium { font-weight: 500; }
 .font-semibold { font-weight: 600; }
+.font-bold { font-weight: 700; }
+
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
 
 /* Flexbox Layouts */
 .flex { display: flex; }

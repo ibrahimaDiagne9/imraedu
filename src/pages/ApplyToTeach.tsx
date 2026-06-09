@@ -110,8 +110,8 @@ const ApplyToTeach = () => {
       </section>
 
       {/* Application Form or Status */}
-      <section id="apply-form" className="py-3xl" style={{ backgroundColor: 'var(--bg-primary)' }}>
-        <div className="container" style={{ maxWidth: '800px' }}>
+      <section id="apply-form" className="py-3xl" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+        <div className="container">
           {status === 'Pending' ? (
             <div className="text-center p-2xl" style={{ border: '1px solid var(--border-light)', borderRadius: 'var(--radius-xl)', backgroundColor: '#F8FAFC' }}>
               <div style={{ display: 'inline-flex', padding: '1rem', backgroundColor: '#DBEAFE', borderRadius: '50%', color: '#1D4ED8', marginBottom: '1.5rem' }}>
@@ -142,7 +142,7 @@ const ApplyToTeach = () => {
               </p>
             </div>
           ) : (
-            <div className="p-xl" style={{ border: '1px solid var(--border-light)', borderRadius: 'var(--radius-xl)', boxShadow: 'var(--shadow-md)' }}>
+            <div className="p-2xl" style={{ backgroundColor: 'var(--bg-primary)', border: '1px solid var(--border-light)', borderRadius: 'var(--radius-2xl)', boxShadow: 'var(--shadow-xl)', margin: '0 auto', maxWidth: '600px' }}>
               <h2 className="text-h2 mb-xl text-center">Submit your application</h2>
               {!isAuthenticated && (
                 <div className="mb-lg p-md text-center text-small text-brand" style={{ backgroundColor: 'var(--brand-blue-light)', borderRadius: 'var(--radius-md)' }}>
@@ -160,7 +160,9 @@ const ApplyToTeach = () => {
                     value={formData.expertise}
                     onChange={(e) => setFormData({...formData, expertise: e.target.value})}
                     placeholder="e.g. Full-Stack Web Development, Data Science"
-                    style={{ padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-strong)', outline: 'none' }}
+                    style={{ padding: '0.875rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-strong)', outline: 'none', fontSize: '1rem', transition: 'border-color 0.2s, box-shadow 0.2s' }}
+                    onFocus={(e) => { e.target.style.borderColor = 'var(--brand-blue)'; e.target.style.boxShadow = '0 0 0 3px rgba(0,86,210,0.1)'; }}
+                    onBlur={(e) => { e.target.style.borderColor = 'var(--border-strong)'; e.target.style.boxShadow = 'none'; }}
                   />
                 </div>
                 
@@ -172,7 +174,9 @@ const ApplyToTeach = () => {
                     value={formData.experience}
                     onChange={(e) => setFormData({...formData, experience: e.target.value})}
                     placeholder="Tell us about any previous teaching, mentoring, or public speaking experience you have..."
-                    style={{ padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-strong)', outline: 'none', resize: 'vertical' }}
+                    style={{ padding: '0.875rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-strong)', outline: 'none', resize: 'vertical', fontSize: '1rem', transition: 'border-color 0.2s, box-shadow 0.2s' }}
+                    onFocus={(e) => { e.target.style.borderColor = 'var(--brand-blue)'; e.target.style.boxShadow = '0 0 0 3px rgba(0,86,210,0.1)'; }}
+                    onBlur={(e) => { e.target.style.borderColor = 'var(--border-strong)'; e.target.style.boxShadow = 'none'; }}
                   />
                 </div>
 
