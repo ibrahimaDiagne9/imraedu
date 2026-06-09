@@ -365,6 +365,53 @@ ul {
   -webkit-overflow-scrolling: touch;
 }
 
+/* Mobile Filter Drawer (inspired by Coursera) */
+@media (max-width: 900px) {
+  .catalog-layout aside {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    bottom: 0;
+    width: 320px;
+    max-width: 85%;
+    background-color: var(--bg-primary);
+    z-index: 100;
+    box-shadow: var(--shadow-xl);
+    transition: right 0.3s ease-in-out;
+    padding: var(--spacing-lg) var(--spacing-md);
+    overflow-y: auto;
+    display: flex !important;
+  }
+
+  .catalog-layout aside.open {
+    right: 0;
+  }
+
+  .catalog-layout .drawer-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 90;
+    display: block;
+  }
+}
+
+@media (min-width: 901px) {
+  .catalog-layout .drawer-overlay {
+    display: none;
+  }
+}
+
+.hide-on-desktop {
+  display: none !important;
+}
+
+@media (max-width: 900px) {
+  .hide-on-desktop {
+    display: flex !important;
+  }
+}
+
 /* Course Player Responsive Grid Layout */
 .player-layout {
   height: calc(100vh - 80px);
@@ -404,5 +451,9 @@ ul {
   .player-content {
     order: 1;
     flex: none;
+    position: sticky;
+    top: 80px;
+    z-index: 30;
+    background-color: var(--bg-secondary);
   }
 }

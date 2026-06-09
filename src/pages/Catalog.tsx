@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Search, Filter, SlidersHorizontal, BookOpen } from 'lucide-react';
+import { Search, Filter, SlidersHorizontal, BookOpen, X } from 'lucide-react';
 import CourseCard from '../components/CourseCard';
 import api from '../api';
 
@@ -15,6 +15,7 @@ const Catalog = () => {
   const initialSearch = searchParams.get('search') || '';
   const [searchQuery, setSearchQuery] = useState(initialSearch);
   const [selectedLevels, setSelectedLevels] = useState<string[]>([]);
+  const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
 
   const toggleLevel = (level: string) => {
     setSelectedLevels(prev =>
@@ -50,12 +51,22 @@ const Catalog = () => {
       </div>
 
       <div className="catalog-layout">
-        {/* Filters Sidebar */}
-        <aside className="flex-col gap-lg">
-          <div style={{ backgroundColor: 'var(--bg-primary)', padding: 'var(--spacing-lg)', borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-sm)', border: '1px solid var(--border-light)' }}>
-            <div className="flex items-center gap-sm mb-md pb-sm" style={{ borderBottom: '1px solid var(--border-light)' }}>
-              <SlidersHorizontal size={18} className="text-brand" />
-              <h3 className="font-semibold">Filters</h3>
+        {/* Filters Sidebar Overlay & Drawer */}
+        {isMobileFiltersOpen && <div className="drawer-overlay" onClick={() => setIsMobileFiltersOpen(false)}></div>}
+        <aside className={`flex-col gap-lg ${isMobileFiltersOpen ? 'open' : ''}`}>
+          <div style={{ backgroundColor: 'var(--bg-primary)', padding: 'var(--spacing-lg)', borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-sm)', border: '1px solid var(--border-light)', width: '100%' }}>
+            <div className="flex items-center justify-between mb-md pb-sm" style={{ borderBottom: '1px solid var(--border-light)' }}>
+              <div className="flex items-center gap-sm">
+                <SlidersHorizontal size={18} className="text-brand" />
+                <h3 className="font-semibold">Filters</h3>
+              </div>
+              <button 
+                onClick={() => setIsMobileFiltersOpen(false)}
+                className="hide-on-desktop" 
+                style={{ color: 'var(--text-secondary)', padding: '0.25rem' }}
+              >
+                <X size={20} />
+              </button>
             </div>
             
             <div className="mb-lg">
@@ -96,6 +107,13 @@ const Catalog = () => {
               </div>
             </div>
             
+            {/* Mobile Apply Button */}
+            <button 
+              onClick={() => setIsMobileFiltersOpen(false)}
+              className="btn btn-primary w-full hide-on-desktop mt-lg"
+            >
+              Apply Filters
+            </button>
           </div>
         </aside>
 
@@ -119,9 +137,17 @@ const Catalog = () => {
                 style={{ border: 'none', background: 'transparent', outline: 'none', width: '100%', marginLeft: '0.5rem', fontFamily: 'inherit', fontSize: '1rem' }}
               />
             </div>
-            <button className="btn btn-secondary flex items-center gap-sm w-full-mobile">
-              <Filter size={18} /> Sort by: Popularity
-            </button>
+            <div className="flex gap-sm w-full-mobile">
+              <button 
+                onClick={() => setIsMobileFiltersOpen(true)}
+                className="btn btn-secondary flex items-center justify-center gap-sm flex-1 hide-on-desktop"
+              >
+                <SlidersHorizontal size={18} /> Filters {selectedLevels.length > 0 && `(${selectedLevels.length})`}
+              </button>
+              <button className="btn btn-secondary flex items-center justify-center gap-sm flex-1">
+                <Filter size={18} /> Sort by: Popularity
+              </button>
+            </div>
           </div>
 
           {isLoading ? (
