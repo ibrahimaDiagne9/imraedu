@@ -30,7 +30,7 @@ const Navbar = () => {
       <div className="container flex items-center justify-between py-md" style={{ position: 'relative' }}>
         <div className="flex items-center gap-xl">
           <Link to="/" className="text-h3 text-brand font-semibold" style={{ letterSpacing: '-0.05em', display: 'flex', alignItems: 'center' }}>
-            <img src="image/IMRAEDU.png" width="100" height="auto" alt="imraedu" />
+            <img src="/image/IMRAEDU.png" width="100" height="auto" alt="imraedu" />
           </Link>
           <Link to="/catalog" className="flex items-center gap-sm btn-ghost hide-on-mobile" style={{ cursor: 'pointer', padding: '0.5rem 1rem', borderRadius: 'var(--radius-full)' }}>
             <span>Explore</span>
