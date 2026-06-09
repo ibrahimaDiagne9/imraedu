@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Search, Filter, SlidersHorizontal, BookOpen, X } from 'lucide-react';
 import CourseCard from '../components/CourseCard';
 import { CourseSkeleton } from '../components/Skeletons';
+import SEO from '../components/SEO';
 import api from '../api';
 
 const fetchCourses = async () => {
@@ -46,6 +47,7 @@ const Catalog = () => {
 
   return (
     <div className="container py-3xl">
+      <SEO title="Course Catalog" description="Browse all free online courses available on ImraEdu." />
       <div className="flex justify-between items-center mb-xl">
         <h1 className="text-h1">Catalog</h1>
         <div className="text-secondary font-medium">Showing {filteredCourses.length} free courses</div>

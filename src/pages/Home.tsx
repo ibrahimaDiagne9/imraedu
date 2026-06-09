@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import Hero from '../components/Hero';
 import CourseCard from '../components/CourseCard';
 import { CourseSkeleton } from '../components/Skeletons';
+import SEO from '../components/SEO';
 import api from '../api';
 
 const fetchCourses = async () => {
@@ -20,6 +21,7 @@ const Home = () => {
 
   return (
     <div>
+      <SEO title="Learn Without Limits" />
       <Hero />
 
       <section className="py-3xl container">

@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { Star, Clock, Globe, Award, PlayCircle, BarChart, Users } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import SEO from '../components/SEO';
 import api from '../api';
 
 const fetchCourse = async (id: string) => {
@@ -60,6 +61,7 @@ const CourseDetails = () => {
 
   return (
     <div>
+      <SEO title={course.title} description={course.description || `Learn ${course.title} on ImraEdu for free.`} />
       {/* Course Header Banner */}
       <div style={{ backgroundColor: 'var(--bg-inverse)', color: 'var(--text-inverse)', padding: '4rem 0' }}>
         <div className="container grid grid-cols-2 gap-3xl">
