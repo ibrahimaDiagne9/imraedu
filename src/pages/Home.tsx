@@ -44,15 +44,16 @@ const Home = () => {
             ))}
           </div>
         ) : (
-          <div className="text-center py-xl" style={{ backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-lg)', padding: '3rem' }}>
+          <div className="text-center p-xl" style={{ backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-lg)' }}>
             <p className="text-secondary text-body-large">Courses are being added by our instructors. Check back soon!</p>
             <Link to="/catalog" className="btn btn-primary mt-md" style={{ display: 'inline-block' }}>Browse Catalog</Link>
           </div>
         )}
       </section>
 
-      <section className="py-3xl container" style={{ backgroundColor: 'var(--bg-primary)', borderRadius: 'var(--radius-xl)', padding: '4rem 3rem', boxShadow: 'var(--shadow-sm)' }}>
-        <div className="grid grid-cols-2 items-center gap-3xl">
+      <section className="py-3xl container">
+        <div className="p-xl" style={{ backgroundColor: 'var(--bg-primary)', borderRadius: 'var(--radius-xl)', boxShadow: 'var(--shadow-sm)' }}>
+          <div className="grid grid-cols-2 items-center gap-3xl">
           <div>
             <h2 className="text-h2 mb-lg">Access to education is a <span className="text-brand">right</span>, not a privilege.</h2>
             <p className="text-body-large text-secondary mb-xl">

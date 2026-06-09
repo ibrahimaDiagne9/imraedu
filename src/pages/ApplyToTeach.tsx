@@ -58,8 +58,8 @@ const ApplyToTeach = () => {
   return (
     <div>
       {/* Hero Section */}
-      <section style={{ backgroundColor: 'var(--bg-inverse)', color: 'white', padding: '6rem 0' }}>
-        <div className="container grid grid-cols-2 items-center gap-3xl flex-col-mobile">
+      <section className="py-3xl" style={{ backgroundColor: 'var(--bg-inverse)', color: 'white' }}>
+        <div className="container grid grid-cols-2 items-center gap-3xl">
           <div>
             <h1 className="text-h1 mb-lg">Come teach with us</h1>
             <p className="text-body-large mb-xl" style={{ color: '#9CA3AF' }}>

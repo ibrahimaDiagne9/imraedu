@@ -210,6 +210,13 @@ ul {
 .mb-lg { margin-bottom: var(--spacing-lg); }
 .mb-xl { margin-bottom: var(--spacing-xl); }
 
+.p-sm { padding: var(--spacing-sm); }
+.p-md { padding: var(--spacing-md); }
+.p-lg { padding: var(--spacing-lg); }
+.p-xl { padding: var(--spacing-xl); }
+.p-2xl { padding: var(--spacing-2xl); }
+.p-3xl { padding: var(--spacing-3xl); }
+
 .py-md { padding-top: var(--spacing-md); padding-bottom: var(--spacing-md); }
 .py-lg { padding-top: var(--spacing-lg); padding-bottom: var(--spacing-lg); }
 .py-xl { padding-top: var(--spacing-xl); padding-bottom: var(--spacing-xl); }
@@ -238,6 +245,11 @@ ul {
   .grid-cols-4, .grid-cols-3, .grid-cols-2 {
     grid-template-columns: 1fr;
   }
+
+  .p-2xl { padding: var(--spacing-xl); }
+  .p-3xl { padding: var(--spacing-xl); }
+  .py-2xl { padding-top: var(--spacing-xl); padding-bottom: var(--spacing-xl); }
+  .py-3xl { padding-top: var(--spacing-xl); padding-bottom: var(--spacing-xl); }
 }
 
 /* Custom Responsive Layouts */
@@ -280,7 +292,7 @@ ul {
 
 /* Mobile & Tablet Overrides */
 @media (max-width: 900px) {
-  .auth-grid, .editor-grid, .dashboard-layout, .catalog-layout, .details-layout, .split-grid {
+  .auth-grid, .editor-grid, .dashboard-layout, .catalog-layout, .details-layout, .split-grid, .grid-cols-2 {
     grid-template-columns: 1fr;
   }
 
