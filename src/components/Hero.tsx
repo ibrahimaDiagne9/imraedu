@@ -1,9 +1,8 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const Hero = () => {
   const { user } = useAuth();
-  const navigate = useNavigate();
 
   return (
     <div style={{ background: 'linear-gradient(135deg, var(--brand-blue-light) 0%, #FFFFFF 100%)', padding: '6rem 0' }}>

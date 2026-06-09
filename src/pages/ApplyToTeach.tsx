@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { BookOpen, CheckCircle, GraduationCap, Users, PlayCircle } from 'lucide-react';
+import { CheckCircle, GraduationCap, Users } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import api from '../api';
 
 const ApplyToTeach = () => {
-  const { isAuthenticated, user } = useAuth();
+  const { user } = useAuth();
+  const isAuthenticated = !!user;
   const navigate = useNavigate();
   const [status, setStatus] = useState<'loading' | 'none' | 'Pending' | 'Approved' | 'Rejected'>('loading');
   const [formData, setFormData] = useState({ expertise: '', experience: '' });
