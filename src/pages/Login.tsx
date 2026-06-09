@@ -65,7 +65,7 @@ const Login = () => {
           try {
             const res = await api.post('/auth/google/', { token: response.credential });
             login(res.data.access, res.data.refresh);
-            navigate('/dashboard');
+            navigate('/');
           } catch (err: any) {
             setError(err.response?.data?.error || 'Google Sign-In failed. Please try again.');
           } finally {
@@ -92,7 +92,7 @@ const Login = () => {
     try {
       const res = await api.post('/token/', { username, password });
       login(res.data.access, res.data.refresh);
-      navigate('/dashboard');
+      navigate('/');
     } catch {
       setError('Invalid username or password. Please try again.');
     } finally {

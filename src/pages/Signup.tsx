@@ -76,7 +76,7 @@ const Signup = () => {
           try {
             const res = await api.post('/auth/google/', { token: response.credential });
             login(res.data.access, res.data.refresh);
-            navigate('/dashboard');
+            navigate('/');
           } catch (err: any) {
             setError(err.response?.data?.error || 'Google Sign-Up failed. Please try again.');
           } finally {
