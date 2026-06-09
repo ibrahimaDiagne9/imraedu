@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import api from '../api';
+import { useAuth } from '../context/AuthContext';
 import { Mail, ArrowLeft, CheckCircle, KeyRound, ShieldCheck, Sparkles } from 'lucide-react';
 
 // Social provider SVG icons
@@ -35,6 +36,39 @@ const ForgotPassword = () => {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
+  const { login } = useAuth();
+  const navigate = useNavigate();
+
+  // ── Google Sign-In (recover via Google account) ──────────────────────────
+  useEffect(() => {
+    const initGoogle = () => {
+      const g = (window as any).google;
+      if (!g) return;
+      g.accounts.id.initialize({
+        client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID || '1081395352601-nb8o7k7qfej9iic5c7t4c12h32uolb67.apps.googleusercontent.com',
+        callback: async (response: any) => {
+          setStatus('loading');
+          setErrorMessage('');
+          try {
+            const res = await api.post('/auth/google/', { token: response.credential });
+            login(res.data.access, res.data.refresh);
+            navigate('/dashboard');
+          } catch (err: any) {
+            setStatus('error');
+            setErrorMessage(err.response?.data?.error || 'Google Sign-In failed. Please try again.');
+          }
+        },
+      });
+    };
+    const timer = setTimeout(initGoogle, 500);
+    return () => clearTimeout(timer);
+  }, [login, navigate]);
+
+  const handleGoogleRecover = () => {
+    const g = (window as any).google;
+    if (g) g.accounts.id.prompt();
+    else setErrorMessage('Google Sign-In is not available. Please use the email form below.');
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -165,22 +199,26 @@ const ForgotPassword = () => {
                 </p>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.625rem' }}>
                   {[
-                    { icon: <GoogleIcon />, label: 'Google', hoverBg: '#FFF1F0', hoverBorder: '#FBBC05' },
-                    { icon: <AppleIcon />, label: 'Apple', hoverBg: '#F5F5F5', hoverBorder: '#888' },
-                    { icon: <GitHubIcon />, label: 'GitHub', hoverBg: '#F0F0FF', hoverBorder: '#333' },
-                  ].map(({ icon, label }) => (
+                    { icon: <GoogleIcon />, label: 'Google', key: 'google' },
+                    { icon: <AppleIcon />, label: 'Apple', key: 'apple' },
+                    { icon: <GitHubIcon />, label: 'GitHub', key: 'github' },
+                  ].map(({ icon, label, key }) => (
                     <button
                       key={label}
                       type="button"
+                      onClick={key === 'google' ? handleGoogleRecover : undefined}
+                      disabled={status === 'loading'}
                       style={{
                         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
                         gap: '0.4rem', padding: '0.875rem 0.5rem',
                         border: '1px solid var(--border-strong)', borderRadius: '12px',
-                        background: 'var(--bg-primary)', cursor: 'pointer',
+                        background: 'var(--bg-primary)', cursor: key === 'google' ? 'pointer' : 'not-allowed',
+                        opacity: key !== 'google' ? 0.5 : 1,
                         transition: 'all 0.2s', fontSize: '0.75rem', fontWeight: 600,
                         color: 'var(--text-secondary)',
                       }}
                       onMouseEnter={e => {
+                        if (key !== 'google') return;
                         (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--brand-blue)';
                         (e.currentTarget as HTMLButtonElement).style.background = 'var(--brand-blue-light)';
                         (e.currentTarget as HTMLButtonElement).style.color = 'var(--brand-blue)';

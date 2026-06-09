@@ -215,6 +215,73 @@ from django.contrib.auth.tokens import default_token_generator
 from django.conf import settings
 from django.utils.http import urlsafe_base64_decode
 
+import os
+import requests
+from rest_framework_simplejwt.tokens import RefreshToken
+
+class GoogleAuthView(APIView):
+    """Verify Google token, find or create user, and return JWT tokens."""
+    permission_classes = (AllowAny,)
+
+    def post(self, request, *args, **kwargs):
+        token = request.data.get('token')
+        if not token:
+            return Response({"error": "Token is required"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Verify token with Google API
+        response = requests.get(f"https://oauth2.googleapis.com/tokeninfo?id_token={token}")
+        if response.status_code != 200:
+            return Response({"error": "Invalid or expired token"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        id_info = response.json()
+        
+        # Verify client ID if set in environment
+        client_id = os.getenv('GOOGLE_CLIENT_ID')
+        if client_id and id_info.get('aud') != client_id:
+            return Response({"error": "Google Client ID mismatch"}, status=status.HTTP_400_BAD_REQUEST)
+
+        email = id_info.get('email')
+        if not email:
+            return Response({"error": "Email not provided by Google account"}, status=status.HTTP_400_BAD_REQUEST)
+
+        first_name = id_info.get('given_name', '')
+        last_name = id_info.get('family_name', '')
+        
+        # Find or create user
+        user = User.objects.filter(email=email).first()
+        if not user:
+            # Generate username from email prefix
+            username = email.split('@')[0]
+            base_username = username
+            counter = 1
+            while User.objects.filter(username=username).exists():
+                username = f"{base_username}{counter}"
+                counter += 1
+            
+            user = User.objects.create_user(
+                username=username,
+                email=email,
+                first_name=first_name,
+                last_name=last_name
+            )
+            user.is_active = True
+            user.save()
+
+        # Generate JWT tokens
+        refresh = RefreshToken.for_user(user)
+        return Response({
+            'access': str(refresh.access_token),
+            'refresh': str(refresh),
+            'user': {
+                'id': user.id,
+                'username': user.username,
+                'email': user.email,
+                'first_name': user.first_name,
+                'is_instructor': user.is_instructor
+            }
+        }, status=status.HTTP_200_OK)
+
+
 class PasswordResetRequestView(generics.GenericAPIView):
     permission_classes = (AllowAny,)
     serializer_class = PasswordResetRequestSerializer
@@ -228,7 +295,22 @@ class PasswordResetRequestView(generics.GenericAPIView):
         if user:
             token = default_token_generator.make_token(user)
             uid = urlsafe_base64_encode(force_bytes(user.pk))
-            reset_url = f"http://localhost:5173/reset-password?uidb64={uid}&token={token}"
+            
+            # Dynamically determine frontend url based on Origin header or FRONTEND_URL env var
+            frontend_url = os.getenv('FRONTEND_URL')
+            if not frontend_url:
+                origin = request.headers.get('origin')
+                referer = request.headers.get('referer')
+                if origin:
+                    frontend_url = origin
+                elif referer:
+                    from urllib.parse import urlparse
+                    parsed = urlparse(referer)
+                    frontend_url = f"{parsed.scheme}://{parsed.netloc}"
+                else:
+                    frontend_url = "http://localhost:5173"
+            
+            reset_url = f"{frontend_url.rstrip('/')}/reset-password?uidb64={uid}&token={token}"
             send_mail(
                 'Password Reset for ImraEdu',
                 f'Click the link to reset your password: {reset_url}',

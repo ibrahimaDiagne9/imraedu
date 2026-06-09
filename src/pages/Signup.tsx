@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../api';
+import { useAuth } from '../context/AuthContext';
 import { Eye, EyeOff, User, Mail, Lock, CheckCircle2 } from 'lucide-react';
 
 // ── Social icons ─────────────────────────────────────────────────────
@@ -55,11 +56,45 @@ const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const set = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm(f => ({ ...f, [field]: e.target.value }));
 
+  // ── Google Sign-In ─────────────────────────────────────────────────────────
+  useEffect(() => {
+    const initGoogle = () => {
+      const g = (window as any).google;
+      if (!g) return;
+      g.accounts.id.initialize({
+        client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID || '1081395352601-nb8o7k7qfej9iic5c7t4c12h32uolb67.apps.googleusercontent.com',
+        callback: async (response: any) => {
+          setLoading(true);
+          setError('');
+          try {
+            const res = await api.post('/auth/google/', { token: response.credential });
+            login(res.data.access, res.data.refresh);
+            navigate('/dashboard');
+          } catch (err: any) {
+            setError(err.response?.data?.error || 'Google Sign-Up failed. Please try again.');
+          } finally {
+            setLoading(false);
+          }
+        },
+      });
+    };
+    const timer = setTimeout(initGoogle, 500);
+    return () => clearTimeout(timer);
+  }, [login, navigate]);
+
+  const handleGoogleSignIn = () => {
+    const g = (window as any).google;
+    if (g) g.accounts.id.prompt();
+    else setError('Google Sign-In is not available. Please use email sign-up.');
+  };
+
+  // ── Email Signup ───────────────────────────────────────────────────────────
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -109,15 +144,19 @@ const Signup = () => {
               <button
                 key={key}
                 type="button"
+                onClick={key === 'google' ? handleGoogleSignIn : undefined}
+                disabled={loading}
                 style={{
                   display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
                   gap: '0.35rem', padding: '0.75rem 0.5rem',
                   border: '1.5px solid var(--border-strong)', borderRadius: '12px',
-                  background: 'var(--bg-primary)', cursor: 'pointer',
+                  background: 'var(--bg-primary)', cursor: key === 'google' ? 'pointer' : 'not-allowed',
+                  opacity: key !== 'google' ? 0.5 : 1,
                   transition: 'all 0.2s', fontSize: '0.75rem', fontWeight: 600,
                   color: 'var(--text-secondary)',
                 }}
                 onMouseEnter={e => {
+                  if (key !== 'google') return;
                   const b = e.currentTarget;
                   b.style.borderColor = 'var(--brand-blue)';
                   b.style.background = 'var(--brand-blue-light)';

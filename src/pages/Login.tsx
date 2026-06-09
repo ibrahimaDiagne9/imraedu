@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../api';
 import { useAuth } from '../context/AuthContext';
@@ -52,6 +52,38 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const initializeGoogleSignIn = () => {
+      const g = (window as any).google;
+      if (g) {
+        g.accounts.id.initialize({
+          client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID || '1081395352601-nb8o7k7qfej9iic5c7t4c12h32uolb67.apps.googleusercontent.com',
+          callback: async (response: any) => {
+            setLoading(true);
+            setError('');
+            try {
+              const res = await api.post('/auth/google/', { token: response.credential });
+              login(res.data.access, res.data.refresh);
+              navigate('/dashboard');
+            } catch (err: any) {
+              setError(err.response?.data?.error || 'Google Sign-In failed. Please try again.');
+            } finally {
+              setLoading(false);
+            }
+          }
+        });
+        
+        g.accounts.id.renderButton(
+          document.getElementById('google-signin-btn'),
+          { theme: 'outline', size: 'large', width: 420, text: 'signin_with', shape: 'rectangular' }
+        );
+      }
+    };
+
+    const timer = setTimeout(initializeGoogleSignIn, 500);
+    return () => clearTimeout(timer);
+  }, [login, navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -139,15 +171,24 @@ const Login = () => {
               <button
                 key={key}
                 type="button"
+                onClick={() => {
+                  if (key !== 'google') return;
+                  const g = (window as any).google;
+                  if (g) g.accounts.id.prompt();
+                  else setError('Google Sign-In is not available.');
+                }}
+                disabled={loading}
                 style={{
                   display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
                   gap: '0.35rem', padding: '0.75rem 0.5rem',
                   border: '1.5px solid var(--border-strong)', borderRadius: '12px',
-                  background: 'var(--bg-primary)', cursor: 'pointer',
+                  background: 'var(--bg-primary)', cursor: key === 'google' ? 'pointer' : 'not-allowed',
+                  opacity: key !== 'google' ? 0.5 : 1,
                   transition: 'all 0.2s', fontSize: '0.75rem', fontWeight: 600,
                   color: 'var(--text-secondary)',
                 }}
                 onMouseEnter={e => {
+                  if (key !== 'google') return;
                   const b = e.currentTarget;
                   b.style.borderColor = 'var(--brand-blue)';
                   b.style.background = 'var(--brand-blue-light)';
