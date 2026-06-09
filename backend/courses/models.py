@@ -116,3 +116,32 @@ class Enrollment(models.Model):
     def __str__(self):
         return f"{self.user.username} enrolled in {self.course.title}"
 
+class Review(models.Model):
+    course = models.ForeignKey(Course, related_name='course_reviews', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name='reviews', on_delete=models.CASCADE)
+    rating = models.IntegerField(default=5)  # 1 to 5
+    text = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ('course', 'user')
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"Review by {self.user.username} for {self.course.title}"
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.update_course_rating()
+
+    def update_course_rating(self):
+        reviews = Review.objects.filter(course=self.course)
+        total_reviews = reviews.count()
+        if total_reviews > 0:
+            avg_rating = sum(r.rating for r in reviews) / total_reviews
+            self.course.rating = round(avg_rating, 1)
+            self.course.reviews = total_reviews
+            self.course.save()
+
+

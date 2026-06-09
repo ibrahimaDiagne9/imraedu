@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { Star, Clock, Globe, Award, PlayCircle, BarChart, Users } from 'lucide-react';
@@ -19,8 +20,36 @@ const CourseDetails = () => {
     enabled: !!id,
   });
 
+  const { data: reviews = [], refetch: refetchReviews } = useQuery({
+    queryKey: ['reviews', id],
+    queryFn: async () => {
+      const { data } = await api.get(`/courses/${id}/reviews/`);
+      return data;
+    },
+    enabled: !!id,
+  });
+
   const enrollMutation = useMutation({
     mutationFn: () => api.post('/enrollments/enroll/', { course_id: Number(id) }),
+  });
+
+  const [rating, setRating] = useState(5);
+  const [reviewText, setReviewText] = useState('');
+  const [reviewError, setReviewError] = useState('');
+  const [reviewSuccess, setReviewSuccess] = useState(false);
+
+  const submitReviewMutation = useMutation({
+    mutationFn: () => api.post(`/courses/${id}/reviews/`, { rating, text: reviewText }),
+    onSuccess: () => {
+      setReviewSuccess(true);
+      setReviewError('');
+      setReviewText('');
+      refetchReviews();
+    },
+    onError: (err: any) => {
+      setReviewError(err.response?.data?.detail || 'Failed to submit review.');
+      setReviewSuccess(false);
+    }
   });
 
   if (isLoading) return <div className="container py-3xl text-center text-secondary">Loading course details...</div>;
@@ -140,6 +169,69 @@ const CourseDetails = () => {
             ) : (
               <p className="text-secondary">The curriculum for this course is being prepared.</p>
             )}
+          </section>
+
+          {/* Reviews Section */}
+          <section className="mt-xl">
+            <h2 className="text-h2 mb-lg">Student Reviews</h2>
+            
+            {user && (
+              <div className="mb-2xl p-xl" style={{ backgroundColor: 'var(--bg-primary)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-light)' }}>
+                <h3 className="text-h3 mb-md">Leave a Review</h3>
+                {reviewSuccess && <div className="mb-md text-brand font-semibold">Thank you! Your review has been submitted.</div>}
+                {reviewError && <div className="mb-md text-accent-red">{reviewError}</div>}
+                <div className="flex items-center gap-sm mb-md text-brand">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button key={star} type="button" onClick={() => setRating(star)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
+                      <Star size={24} fill={star <= rating ? 'currentColor' : 'none'} color={star <= rating ? '#FACC15' : 'var(--text-tertiary)'} />
+                    </button>
+                  ))}
+                </div>
+                <textarea
+                  value={reviewText}
+                  onChange={(e) => setReviewText(e.target.value)}
+                  placeholder="Share your experience with this course..."
+                  rows={4}
+                  className="w-full mb-md"
+                  style={{ padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-strong)', outline: 'none', resize: 'vertical' }}
+                />
+                <button
+                  onClick={() => submitReviewMutation.mutate()}
+                  disabled={submitReviewMutation.isPending}
+                  className="btn btn-primary"
+                >
+                  {submitReviewMutation.isPending ? 'Submitting...' : 'Submit Review'}
+                </button>
+              </div>
+            )}
+
+            <div className="flex-col gap-lg">
+              {reviews.length > 0 ? reviews.map((review: any) => (
+                <div key={review.id} className="p-xl" style={{ borderBottom: '1px solid var(--border-light)' }}>
+                  <div className="flex items-center justify-between mb-sm">
+                    <div className="flex items-center gap-sm">
+                      <div className="flex items-center justify-center text-white font-semibold" style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: 'var(--brand-blue)' }}>
+                        {review.user_name.charAt(0).toUpperCase()}
+                      </div>
+                      <div>
+                        <div className="font-semibold">{review.user_name}</div>
+                        <div className="text-small text-tertiary">{new Date(review.created_at).toLocaleDateString()}</div>
+                      </div>
+                    </div>
+                    <div className="flex gap-xs" style={{ color: '#FACC15' }}>
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <Star key={star} size={16} fill={star <= review.rating ? 'currentColor' : 'none'} />
+                      ))}
+                    </div>
+                  </div>
+                  {review.text && <p className="text-secondary mt-md">{review.text}</p>}
+                </div>
+              )) : (
+                <p className="text-secondary text-center py-xl" style={{ border: '1px solid var(--border-light)', borderRadius: 'var(--radius-lg)' }}>
+                  No reviews yet. Be the first to review this course!
+                </p>
+              )}
+            </div>
           </section>
         </div>
 

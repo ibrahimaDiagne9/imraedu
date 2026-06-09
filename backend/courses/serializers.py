@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Course, Module, Lesson, Question, Choice, Enrollment, InstructorApplication
+from .models import User, Course, Module, Lesson, Question, Choice, Enrollment, InstructorApplication, Review
 
 class InstructorApplicationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -12,6 +12,17 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username', 'email', 'first_name', 'last_name', 'bio', 'is_instructor']
+
+class ReviewSerializer(serializers.ModelSerializer):
+    user_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Review
+        fields = ['id', 'user', 'user_name', 'rating', 'text', 'created_at']
+        read_only_fields = ['user', 'created_at']
+
+    def get_user_name(self, obj):
+        return obj.user.first_name or obj.user.username
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)

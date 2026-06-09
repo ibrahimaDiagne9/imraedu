@@ -11,7 +11,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from rest_framework_simplejwt.tokens import RefreshToken
-from .models import Course, Module, Lesson, Question, Choice, Enrollment, InstructorApplication
+from .models import Course, Module, Lesson, Question, Choice, Enrollment, InstructorApplication, Review
 from .serializers import (
     CourseSerializer, CourseWriteSerializer,
     ModuleSerializer, ModuleWriteSerializer,
@@ -20,7 +20,7 @@ from .serializers import (
     ChoiceSerializer, ChoiceWriteSerializer,
     EnrollmentSerializer, RegisterSerializer, UserSerializer,
     PasswordResetRequestSerializer, PasswordResetConfirmSerializer,
-    InstructorApplicationSerializer
+    InstructorApplicationSerializer, ReviewSerializer
 )
 import requests
 import os
@@ -574,3 +574,32 @@ class InstructorApplicationView(APIView):
                 serializer.save(user=request.user)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class CourseReviewView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            return [AllowAny()]
+        return super().get_permissions()
+
+    def get(self, request, course_id):
+        reviews = Review.objects.filter(course_id=course_id).order_by('-created_at')
+        serializer = ReviewSerializer(reviews, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, course_id):
+        enrolled = Enrollment.objects.filter(user=request.user, course_id=course_id).exists()
+        if not enrolled:
+            return Response({"detail": "You must be enrolled to leave a review."}, status=status.HTTP_403_FORBIDDEN)
+        
+        review = Review.objects.filter(user=request.user, course_id=course_id).first()
+        if review:
+            serializer = ReviewSerializer(review, data=request.data, partial=True)
+        else:
+            serializer = ReviewSerializer(data=request.data)
+            
+        if serializer.is_valid():
+            serializer.save(user=request.user, course_id=course_id)
+            return Response(serializer.data, status=status.HTTP_201_CREATED if not review else status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
