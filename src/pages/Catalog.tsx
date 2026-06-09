@@ -49,9 +49,9 @@ const Catalog = () => {
         <div className="text-secondary font-medium">Showing {filteredCourses.length} free courses</div>
       </div>
 
-      <div className="grid grid-cols-4 gap-xl">
+      <div className="catalog-layout">
         {/* Filters Sidebar */}
-        <aside className="col-span-1 flex-col gap-lg" style={{ gridColumn: 'span 1' }}>
+        <aside className="flex-col gap-lg">
           <div style={{ backgroundColor: 'var(--bg-primary)', padding: 'var(--spacing-lg)', borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-sm)', border: '1px solid var(--border-light)' }}>
             <div className="flex items-center gap-sm mb-md pb-sm" style={{ borderBottom: '1px solid var(--border-light)' }}>
               <SlidersHorizontal size={18} className="text-brand" />
@@ -100,8 +100,8 @@ const Catalog = () => {
         </aside>
 
         {/* Results Area */}
-        <div className="col-span-3" style={{ gridColumn: 'span 3' }}>
-          <div className="flex gap-md mb-xl">
+        <div>
+          <div className="flex gap-md mb-xl flex-col-mobile">
             <div className="flex-grow flex items-center" style={{ backgroundColor: 'var(--bg-primary)', padding: '0.75rem 1rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-strong)' }}>
               <Search size={18} className="text-tertiary" />
               <input 
@@ -119,7 +119,7 @@ const Catalog = () => {
                 style={{ border: 'none', background: 'transparent', outline: 'none', width: '100%', marginLeft: '0.5rem', fontFamily: 'inherit', fontSize: '1rem' }}
               />
             </div>
-            <button className="btn btn-secondary flex items-center gap-sm">
+            <button className="btn btn-secondary flex items-center gap-sm w-full-mobile">
               <Filter size={18} /> Sort by: Popularity
             </button>
           </div>

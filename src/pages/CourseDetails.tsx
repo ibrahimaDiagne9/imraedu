@@ -102,8 +102,8 @@ const CourseDetails = () => {
       </div>
 
       {/* Course Details Content */}
-      <div className="container grid grid-cols-3 gap-3xl py-3xl">
-        <div className="col-span-2 flex-col gap-2xl" style={{ gridColumn: 'span 2' }}>
+      <div className="container details-layout py-3xl">
+        <div className="flex-col gap-2xl">
           {course.description && (
             <section>
               <h2 className="text-h2 mb-lg">About this course</h2>

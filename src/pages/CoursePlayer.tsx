@@ -89,9 +89,9 @@ const CoursePlayer = () => {
   };
 
   return (
-    <div style={{ height: 'calc(100vh - 80px)', display: 'flex' }}>
+    <div className="player-layout">
       {/* Sidebar Curriculum */}
-      <div style={{ width: '350px', backgroundColor: 'var(--bg-primary)', borderRight: '1px solid var(--border-light)', overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
+      <div className="player-sidebar">
         <div style={{ padding: 'var(--spacing-md)', borderBottom: '1px solid var(--border-light)' }}>
           <Link to={`/course/${id}`} className="flex items-center gap-xs text-small text-secondary hover-scale" style={{ display: 'inline-flex', marginBottom: '1rem' }}>
             <ChevronLeft size={16} /> Back to Course
@@ -150,7 +150,7 @@ const CoursePlayer = () => {
       </div>
 
       {/* Main Content Area */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', backgroundColor: 'var(--bg-secondary)', overflowY: 'auto' }}>
+      <div className="player-content">
         
         {/* Video Player */}
         {activeLesson && activeLesson.lesson_type === 'video' ? (

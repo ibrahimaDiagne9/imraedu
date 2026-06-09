@@ -63,7 +63,7 @@ const InstructorDashboard = () => {
       {/* Header */}
       <div style={{ background: 'linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%)', padding: '3rem 0' }}>
         <div className="container">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between flex-col-mobile gap-md">
             <div>
               <div className="flex items-center gap-sm mb-sm">
                 <GraduationCap size={28} color="white" />
@@ -138,14 +138,13 @@ const InstructorDashboard = () => {
             </button>
           </div>
         ) : (
-          <div style={{
+          <div className="responsive-table-container" style={{
             backgroundColor: 'var(--bg-primary)',
             borderRadius: 'var(--radius-xl)',
             border: '1px solid var(--border-light)',
-            overflow: 'hidden',
             boxShadow: 'var(--shadow-sm)'
           }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '600px' }}>
               <thead>
                 <tr style={{ backgroundColor: 'var(--bg-secondary)', borderBottom: '1px solid var(--border-light)' }}>
                   {['Course', 'Level', 'Status', 'Rating', 'Actions'].map(h => (

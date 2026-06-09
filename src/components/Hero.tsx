@@ -12,17 +12,25 @@ const Hero = () => {
             <button className="btn btn-secondary" style={{ padding: '0.75rem 2rem', fontSize: '1.125rem' }}>Explore Courses</button>
           </div>
         </div>
-        <div className="animate-fade-in" style={{ animationDelay: '200ms' }}>
+        <div className="animate-fade-in hide-on-mobile" style={{ animationDelay: '200ms' }}>
           <div style={{ 
             background: 'white', 
-            padding: '2rem', 
+            padding: '1rem', 
             borderRadius: 'var(--radius-xl)', 
             boxShadow: 'var(--shadow-xl)',
             transform: 'rotate(2deg)'
           }}>
-            <div style={{ height: '300px', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-lg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <span className="text-tertiary font-medium">Hero Graphic / Image Placeholder</span>
-            </div>
+            <img 
+              src="/hero_graphic.png" 
+              alt="ImraEdu Learning Graphic" 
+              style={{ 
+                width: '100%', 
+                height: 'auto', 
+                maxHeight: '350px',
+                objectFit: 'contain',
+                borderRadius: 'var(--radius-lg)' 
+              }} 
+            />
           </div>
         </div>
       </div>

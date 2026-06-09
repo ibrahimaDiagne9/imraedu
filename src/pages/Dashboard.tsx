@@ -42,8 +42,8 @@ const Dashboard = () => {
         >Completed ({completed.length})</button>
       </div>
 
-      <div className="grid grid-cols-3 gap-3xl">
-        <div className="col-span-2" style={{ gridColumn: 'span 2' }}>
+      <div className="dashboard-layout">
+        <div>
           {isLoading ? (
             <p className="text-secondary py-xl text-center">Loading your courses...</p>
           ) : visibleEnrollments.length === 0 ? (
@@ -60,12 +60,8 @@ const Dashboard = () => {
           ) : (
             <div className="flex-col gap-lg">
               {visibleEnrollments.map((enrollment: any) => (
-                <div key={enrollment.id} style={{
-                  backgroundColor: 'var(--bg-primary)', borderRadius: 'var(--radius-xl)',
-                  padding: 'var(--spacing-xl)', boxShadow: 'var(--shadow-sm)',
-                  border: '1px solid var(--border-light)', display: 'flex', gap: '2rem'
-                }}>
-                  <div style={{
+                <div key={enrollment.id} className="enrollment-card">
+                  <div className="thumbnail" style={{
                     width: '150px', height: '150px',
                     backgroundColor: enrollment.course.image_color || '#EBF3FF',
                     backgroundImage: enrollment.course.thumbnail_url ? `url(${enrollment.course.thumbnail_url})` : undefined,
