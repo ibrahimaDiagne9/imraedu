@@ -201,8 +201,10 @@ class FileUploadView(APIView):
         file_name = default_storage.save(f"uploads/{file_obj.name}", file_obj)
         file_url = default_storage.url(file_name)
         
-        absolute_url = request.build_absolute_uri(file_url)
-        return Response({"url": absolute_url}, status=status.HTTP_201_CREATED)
+        # Cloudinary returns fully-qualified URLs; don't wrap them again
+        if not file_url.startswith('http'):
+            file_url = request.build_absolute_uri(file_url)
+        return Response({"url": file_url}, status=status.HTTP_201_CREATED)
 
 # ─── Password Reset ──────────────────────────────────────────────────────────
 
