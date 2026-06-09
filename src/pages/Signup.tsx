@@ -62,7 +62,7 @@ const Signup = () => {
   const set = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm(f => ({ ...f, [field]: e.target.value }));
 
-  // ── Google & Apple Sign-In ─────────────────────────────────────────────────────────
+  // ── Google Sign-In init ─────────────────────────────────────────────────────────
   useEffect(() => {
     const initGoogle = () => {
       const g = (window as any).google;
@@ -83,51 +83,17 @@ const Signup = () => {
           }
         },
       });
-    };
-    
-    const initApple = () => {
-      const appleId = (window as any).AppleID;
-      if (appleId) {
-        appleId.auth.init({
-          clientId: import.meta.env.VITE_APPLE_CLIENT_ID || 'com.imraedu.web',
-          scope: 'name email',
-          redirectURI: window.location.origin + '/signup',
-          usePopup: true
+      const btnEl = document.getElementById('google-signin-overlay-signup');
+      if (btnEl) {
+        g.accounts.id.renderButton(btnEl, {
+          theme: 'outline', size: 'large', text: 'signup_with', width: 200
         });
       }
     };
-
-    const timer = setTimeout(() => {
-      initGoogle();
-      initApple();
-    }, 500);
+    const timer = setTimeout(initGoogle, 600);
     return () => clearTimeout(timer);
   }, [login, navigate]);
 
-  const handleGoogleSignIn = () => {
-    const g = (window as any).google;
-    if (g) g.accounts.id.prompt();
-    else setError('Google Sign-In is not available. Please use email sign-up.');
-  };
-
-  const handleAppleSignIn = async () => {
-    const appleId = (window as any).AppleID;
-    if (appleId) {
-      try {
-        const response = await appleId.auth.signIn();
-        setLoading(true);
-        setError('');
-        const res = await api.post('/auth/apple/', { token: response.authorization.id_token });
-        login(res.data.access, res.data.refresh);
-        navigate('/dashboard');
-      } catch (err: any) {
-        setError(err.response?.data?.error || 'Apple Sign-Up failed. Please try again.');
-        setLoading(false);
-      }
-    } else {
-      setError('Apple Sign-In is not available.');
-    }
-  };
 
   // ── Email Signup ───────────────────────────────────────────────────────────
   const handleSignup = async (e: React.FormEvent) => {
@@ -175,43 +141,73 @@ const Signup = () => {
 
           {/* Social buttons */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.625rem', marginBottom: '1.5rem' }}>
-            {socialProviders.map(({ key, icon, label }) => (
-              <button
-                key={key}
-                type="button"
-                onClick={key === 'google' ? handleGoogleSignIn : key === 'apple' ? handleAppleSignIn : undefined}
-                disabled={loading}
-                style={{
-                  display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                  gap: '0.35rem', padding: '0.75rem 0.5rem',
-                  border: '1.5px solid var(--border-strong)', borderRadius: '12px',
-                  background: 'var(--bg-primary)', cursor: key === 'google' || key === 'apple' ? 'pointer' : 'not-allowed',
-                  opacity: key !== 'google' && key !== 'apple' ? 0.5 : 1,
-                  transition: 'all 0.2s', fontSize: '0.75rem', fontWeight: 600,
-                  color: 'var(--text-secondary)',
-                }}
-                onMouseEnter={e => {
-                  if (key !== 'google' && key !== 'apple') return;
-                  const b = e.currentTarget;
-                  b.style.borderColor = 'var(--brand-blue)';
-                  b.style.background = 'var(--brand-blue-light)';
-                  b.style.color = 'var(--brand-blue)';
-                  b.style.transform = 'translateY(-2px)';
-                  b.style.boxShadow = '0 4px 12px rgba(0,86,210,0.15)';
-                }}
-                onMouseLeave={e => {
-                  const b = e.currentTarget;
-                  b.style.borderColor = 'var(--border-strong)';
-                  b.style.background = 'var(--bg-primary)';
-                  b.style.color = 'var(--text-secondary)';
-                  b.style.transform = 'translateY(0)';
-                  b.style.boxShadow = 'none';
-                }}
-              >
-                {icon}
-                {label}
-              </button>
-            ))}
+
+            {/* ── Google overlay ── */}
+            <div
+              style={{
+                position: 'relative', overflow: 'hidden',
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                gap: '0.35rem', padding: '0.75rem 0.5rem',
+                border: '1.5px solid var(--border-strong)', borderRadius: '12px',
+                background: 'var(--bg-primary)', cursor: 'pointer',
+                transition: 'all 0.2s', fontSize: '0.75rem', fontWeight: 600,
+                color: 'var(--text-secondary)',
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.borderColor = 'var(--brand-blue)';
+                e.currentTarget.style.background = 'var(--brand-blue-light)';
+                e.currentTarget.style.color = 'var(--brand-blue)';
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,86,210,0.15)';
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.borderColor = 'var(--border-strong)';
+                e.currentTarget.style.background = 'var(--bg-primary)';
+                e.currentTarget.style.color = 'var(--text-secondary)';
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
+            >
+              <GoogleIcon />
+              Google
+              <div id="google-signin-overlay-signup" style={{
+                position: 'absolute', inset: 0, opacity: 0.01, overflow: 'hidden',
+                display: 'flex', alignItems: 'stretch',
+              }} />
+            </div>
+
+            {/* ── Apple: disabled until Service ID configured ── */}
+            <div
+              title="Apple Sign-In requires an Apple Developer Service ID"
+              style={{
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                gap: '0.35rem', padding: '0.75rem 0.5rem',
+                border: '1.5px solid var(--border-strong)', borderRadius: '12px',
+                background: 'var(--bg-primary)', cursor: 'not-allowed',
+                opacity: 0.45, fontSize: '0.75rem', fontWeight: 600,
+                color: 'var(--text-secondary)',
+              }}
+              onClick={() => setError('Apple Sign-In requires an Apple Developer account. Contact the site admin to enable it.')}
+            >
+              <AppleIcon />
+              Apple
+            </div>
+
+            {/* ── GitHub: coming soon ── */}
+            <div
+              style={{
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                gap: '0.35rem', padding: '0.75rem 0.5rem',
+                border: '1.5px solid var(--border-strong)', borderRadius: '12px',
+                background: 'var(--bg-primary)', cursor: 'not-allowed',
+                opacity: 0.45, fontSize: '0.75rem', fontWeight: 600,
+                color: 'var(--text-secondary)',
+              }}
+            >
+              <GitHubIcon />
+              GitHub
+            </div>
+
           </div>
 
           {/* Divider */}

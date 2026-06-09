@@ -39,7 +39,7 @@ const ForgotPassword = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  // ── Google & Apple Sign-In (recover via social account) ──────────────────────────
+  // ── Google Sign-In init ─────────────────────────────────────────────────────────
   useEffect(() => {
     const initGoogle = () => {
       const g = (window as any).google;
@@ -59,51 +59,17 @@ const ForgotPassword = () => {
           }
         },
       });
-    };
-    
-    const initApple = () => {
-      const appleId = (window as any).AppleID;
-      if (appleId) {
-        appleId.auth.init({
-          clientId: import.meta.env.VITE_APPLE_CLIENT_ID || 'com.imraedu.web',
-          scope: 'name email',
-          redirectURI: window.location.origin + '/forgot-password',
-          usePopup: true
+      const btnEl = document.getElementById('google-signin-overlay-forgot');
+      if (btnEl) {
+        g.accounts.id.renderButton(btnEl, {
+          theme: 'outline', size: 'large', text: 'signin_with', width: 200
         });
       }
     };
-
-    const timer = setTimeout(() => {
-      initGoogle();
-      initApple();
-    }, 500);
+    const timer = setTimeout(initGoogle, 600);
     return () => clearTimeout(timer);
   }, [login, navigate]);
 
-  const handleGoogleRecover = () => {
-    const g = (window as any).google;
-    if (g) g.accounts.id.prompt();
-    else setErrorMessage('Google Sign-In is not available. Please use the email form below.');
-  };
-
-  const handleAppleRecover = async () => {
-    const appleId = (window as any).AppleID;
-    if (appleId) {
-      try {
-        const response = await appleId.auth.signIn();
-        setStatus('loading');
-        setErrorMessage('');
-        const res = await api.post('/auth/apple/', { token: response.authorization.id_token });
-        login(res.data.access, res.data.refresh);
-        navigate('/dashboard');
-      } catch (err: any) {
-        setStatus('error');
-        setErrorMessage(err.response?.data?.error || 'Apple Sign-In failed. Please try again.');
-      }
-    } else {
-      setErrorMessage('Apple Sign-In is not available.');
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -233,45 +199,73 @@ const ForgotPassword = () => {
                   Or recover via
                 </p>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.625rem' }}>
-                  {[
-                    { icon: <GoogleIcon />, label: 'Google', key: 'google' },
-                    { icon: <AppleIcon />, label: 'Apple', key: 'apple' },
-                    { icon: <GitHubIcon />, label: 'GitHub', key: 'github' },
-                  ].map(({ icon, label, key }) => (
-                    <button
-                      key={label}
-                      type="button"
-                      onClick={key === 'google' ? handleGoogleRecover : key === 'apple' ? handleAppleRecover : undefined}
-                      disabled={status === 'loading'}
-                      style={{
-                        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                        gap: '0.4rem', padding: '0.875rem 0.5rem',
-                        border: '1px solid var(--border-strong)', borderRadius: '12px',
-                        background: 'var(--bg-primary)', cursor: key === 'google' || key === 'apple' ? 'pointer' : 'not-allowed',
-                        opacity: key !== 'google' && key !== 'apple' ? 0.5 : 1,
-                        transition: 'all 0.2s', fontSize: '0.75rem', fontWeight: 600,
-                        color: 'var(--text-secondary)',
-                      }}
-                      onMouseEnter={e => {
-                        if (key !== 'google' && key !== 'apple') return;
-                        (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--brand-blue)';
-                        (e.currentTarget as HTMLButtonElement).style.background = 'var(--brand-blue-light)';
-                        (e.currentTarget as HTMLButtonElement).style.color = 'var(--brand-blue)';
-                        (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-2px)';
-                        (e.currentTarget as HTMLButtonElement).style.boxShadow = 'var(--shadow-md)';
-                      }}
-                      onMouseLeave={e => {
-                        (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--border-strong)';
-                        (e.currentTarget as HTMLButtonElement).style.background = 'var(--bg-primary)';
-                        (e.currentTarget as HTMLButtonElement).style.color = 'var(--text-secondary)';
-                        (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(0)';
-                        (e.currentTarget as HTMLButtonElement).style.boxShadow = 'none';
-                      }}
-                    >
-                      {icon}
-                      {label}
-                    </button>
-                  ))}
+
+                  {/* ── Google overlay ── */}
+                  <div
+                    style={{
+                      position: 'relative', overflow: 'hidden',
+                      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                      gap: '0.4rem', padding: '0.875rem 0.5rem',
+                      border: '1px solid var(--border-strong)', borderRadius: '12px',
+                      background: 'var(--bg-primary)', cursor: 'pointer',
+                      transition: 'all 0.2s', fontSize: '0.75rem', fontWeight: 600,
+                      color: 'var(--text-secondary)',
+                    }}
+                    onMouseEnter={e => {
+                      e.currentTarget.style.borderColor = 'var(--brand-blue)';
+                      e.currentTarget.style.background = 'var(--brand-blue-light)';
+                      e.currentTarget.style.color = 'var(--brand-blue)';
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow = 'var(--shadow-md)';
+                    }}
+                    onMouseLeave={e => {
+                      e.currentTarget.style.borderColor = 'var(--border-strong)';
+                      e.currentTarget.style.background = 'var(--bg-primary)';
+                      e.currentTarget.style.color = 'var(--text-secondary)';
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}
+                  >
+                    <GoogleIcon />
+                    Google
+                    <div id="google-signin-overlay-forgot" style={{
+                      position: 'absolute', inset: 0, opacity: 0.01, overflow: 'hidden',
+                      display: 'flex', alignItems: 'stretch',
+                    }} />
+                  </div>
+
+                  {/* ── Apple: disabled ── */}
+                  <div
+                    title="Apple Sign-In requires an Apple Developer Service ID"
+                    style={{
+                      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                      gap: '0.4rem', padding: '0.875rem 0.5rem',
+                      border: '1px solid var(--border-strong)', borderRadius: '12px',
+                      background: 'var(--bg-primary)', cursor: 'not-allowed',
+                      opacity: 0.45, fontSize: '0.75rem', fontWeight: 600,
+                      color: 'var(--text-secondary)',
+                    }}
+                    onClick={() => setErrorMessage('Apple Sign-In requires an Apple Developer account. Contact the site admin to enable it.')}
+                  >
+                    <AppleIcon />
+                    Apple
+                  </div>
+
+                  {/* ── GitHub: coming soon ── */}
+                  <div
+                    style={{
+                      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                      gap: '0.4rem', padding: '0.875rem 0.5rem',
+                      border: '1px solid var(--border-strong)', borderRadius: '12px',
+                      background: 'var(--bg-primary)', cursor: 'not-allowed',
+                      opacity: 0.45, fontSize: '0.75rem', fontWeight: 600,
+                      color: 'var(--text-secondary)',
+                    }}
+                  >
+                    <GitHubIcon />
+                    GitHub
+                  </div>
+
                 </div>
               </div>
 
