@@ -51,7 +51,7 @@ const Home = () => {
             </p>
             <Link to="/signup" className="btn btn-primary" style={{ padding: '0.75rem 2rem', fontSize: '1.125rem' }}>Start your journey today</Link>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+          <div className="split-grid">
             <div style={{ backgroundColor: 'var(--brand-blue-light)', padding: '2rem', borderRadius: 'var(--radius-lg)', textAlign: 'center' }}>
               <div className="text-h2 text-brand mb-xs">{courses.length > 0 ? `${courses.length}+` : '—'}</div>
               <div className="text-secondary font-medium">Free Courses</div>

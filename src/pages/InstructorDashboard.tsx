@@ -276,7 +276,7 @@ const InstructorDashboard = () => {
                   placeholder="What will learners gain from this course?"
                   value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} />
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div className="split-grid">
                 <div>
                   <label style={{ display: 'block', fontWeight: 600, marginBottom: '0.4rem', fontSize: '0.9rem' }}>Level</label>
                   <select style={inputStyle} value={form.level}

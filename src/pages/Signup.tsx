@@ -89,10 +89,12 @@ const Signup = () => {
   };
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', minHeight: 'calc(100vh - 80px)' }}>
+    <div className="auth-grid">
 
-      {/* ── Left panel – form ── */}
-      <div style={{ backgroundColor: 'var(--bg-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '3rem 2.5rem', overflowY: 'auto' }}>
+      {/* ── Left panel - Form ── */}
+      <div style={{
+        backgroundColor: 'var(--bg-primary)',
+        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '3rem 2.5rem', overflowY: 'auto' }}>
         <div className="animate-fade-in" style={{ width: '100%', maxWidth: '420px' }}>
 
           <h2 style={{ fontSize: '1.875rem', fontWeight: 800, marginBottom: '0.4rem', letterSpacing: '-0.02em' }}>Create your account</h2>
@@ -226,7 +228,7 @@ const Signup = () => {
       </div>
 
       {/* ── Right panel – value prop ── */}
-      <div style={{
+      <div className="hide-on-mobile" style={{
         background: 'linear-gradient(145deg, #052e16 0%, #065f46 50%, #10b981 100%)',
         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
         padding: '4rem 3.5rem', position: 'relative', overflow: 'hidden',

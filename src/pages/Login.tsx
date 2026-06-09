@@ -78,10 +78,10 @@ const Login = () => {
   };
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', minHeight: 'calc(100vh - 80px)' }}>
+    <div className="auth-grid">
 
       {/* ── Left panel ── */}
-      <div style={{
+      <div className="hide-on-mobile" style={{
         background: 'linear-gradient(145deg, #0f1f3d 0%, #0056D2 60%, #38bdf8 100%)',
         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
         padding: '4rem 3.5rem', position: 'relative', overflow: 'hidden',

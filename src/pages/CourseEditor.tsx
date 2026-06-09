@@ -394,7 +394,7 @@ const CourseEditor = () => {
       </div>
 
       <div className="container py-xl">
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: '2rem', alignItems: 'start' }}>
+        <div className="editor-grid">
 
           {/* LEFT: Curriculum Builder */}
           <div>
@@ -480,7 +480,7 @@ const CourseEditor = () => {
                         <div style={{ padding: '1rem 1.25rem', backgroundColor: '#F0FDF4', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                           <input style={inputStyle} placeholder="Lesson title *" required
                             value={lessonForm.title} onChange={e => setLessonForm(f => ({ ...f, title: e.target.value }))} />
-                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                          <div className="split-grid">
                             <select style={inputStyle} value={lessonForm.lesson_type}
                               onChange={e => setLessonForm(f => ({ ...f, lesson_type: e.target.value }))}>
                               <option value="video">Video</option>
@@ -557,7 +557,7 @@ const CourseEditor = () => {
                     value={cf.description || ''}
                     onChange={e => setCourseForm((f: any) => ({ ...f, description: e.target.value }))} />
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                <div className="split-grid">
                   <div>
                     <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.35rem' }}>Level</label>
                     <select style={inputStyle} value={cf.level || 'Beginner'}

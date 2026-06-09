@@ -50,13 +50,13 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', minHeight: 'calc(100vh - 80px)' }}>
+    <div className="auth-grid">
 
-      {/* ── Left panel – animated gradient ── */}
-      <div style={{
-        background: 'linear-gradient(145deg, #0f1f3d 0%, #0056D2 50%, #0ea5e9 100%)',
+      {/* ── Left panel ── */}
+      <div className="hide-on-mobile" style={{
+        background: 'linear-gradient(145deg, #0f1f3d 0%, #0056D2 60%, #38bdf8 100%)',
         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-        padding: '4rem 3.5rem', position: 'relative', overflow: 'hidden'
+        padding: '4rem 3.5rem', position: 'relative', overflow: 'hidden',
       }}>
         {/* Decorative blobs */}
         <div style={{ position: 'absolute', top: '-80px', right: '-80px', width: '320px', height: '320px', borderRadius: '50%', background: 'rgba(255,255,255,0.06)', pointerEvents: 'none' }} />
