@@ -21,6 +21,7 @@ urlpatterns = [
     path('password-reset/', views.PasswordResetRequestView.as_view(), name='password_reset'),
     path('password-reset/confirm/', views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('auth/google/', views.GoogleAuthView.as_view(), name='google_auth'),
+    path('auth/apple/', views.AppleAuthView.as_view(), name='apple_auth'),
     path('instructor/upload/', views.FileUploadView.as_view(), name='instructor-upload'),
     path('', include(router.urls)),
     path('instructor/', include(instructor_router.urls)),

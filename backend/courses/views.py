@@ -282,6 +282,121 @@ class GoogleAuthView(APIView):
         }, status=status.HTTP_200_OK)
 
 
+class AppleAuthView(APIView):
+    """Verify Apple identity token, find or create user, return JWT tokens."""
+    permission_classes = (AllowAny,)
+
+    def _get_apple_public_key(self, kid, alg):
+        """Fetch Apple JWKS and return the matching public key object."""
+        from cryptography.hazmat.primitives.asymmetric.rsa import RSAPublicNumbers
+        from cryptography.hazmat.backends import default_backend
+        import base64
+
+        resp = requests.get('https://appleid.apple.com/auth/keys', timeout=10)
+        resp.raise_for_status()
+        keys = resp.json().get('keys', [])
+
+        def b64url_to_int(s):
+            s += '=' * (-len(s) % 4)
+            return int.from_bytes(base64.urlsafe_b64decode(s), 'big')
+
+        for key in keys:
+            if key.get('kid') == kid:
+                pub_numbers = RSAPublicNumbers(
+                    e=b64url_to_int(key['e']),
+                    n=b64url_to_int(key['n']),
+                )
+                return pub_numbers.public_key(default_backend())
+        return None
+
+    def post(self, request, *args, **kwargs):
+        import jwt as pyjwt
+
+        identity_token = request.data.get('token')
+        if not identity_token:
+            return Response({'error': 'Token is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Decode header without verification to get kid + alg
+        try:
+            header = pyjwt.get_unverified_header(identity_token)
+        except Exception:
+            return Response({'error': 'Invalid token format'}, status=status.HTTP_400_BAD_REQUEST)
+
+        kid = header.get('kid')
+        alg = header.get('alg', 'RS256')
+
+        # Get matching Apple public key
+        try:
+            public_key = self._get_apple_public_key(kid, alg)
+        except Exception:
+            return Response({'error': 'Could not fetch Apple public keys'}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+
+        if not public_key:
+            return Response({'error': 'Apple signing key not found'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Audience = Apple Service ID (web client ID)
+        client_id = os.getenv('APPLE_CLIENT_ID', 'com.imraedu.web')
+
+        try:
+            payload = pyjwt.decode(
+                identity_token,
+                public_key,
+                algorithms=[alg],
+                audience=client_id,
+            )
+        except pyjwt.ExpiredSignatureError:
+            return Response({'error': 'Apple token has expired'}, status=status.HTTP_400_BAD_REQUEST)
+        except pyjwt.InvalidAudienceError:
+            return Response({'error': 'Apple Client ID mismatch — check APPLE_CLIENT_ID env var'}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({'error': f'Token verification failed: {str(e)}'}, status=status.HTTP_400_BAD_REQUEST)
+
+        email = payload.get('email')
+        apple_sub = payload.get('sub')  # stable unique ID from Apple
+
+        if not email and not apple_sub:
+            return Response({'error': 'No user identifier provided by Apple'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Find existing user by email first, then try apple_sub stored in username
+        user = None
+        if email:
+            user = User.objects.filter(email=email).first()
+
+        if not user:
+            # Generate username from email prefix or apple sub
+            if email:
+                base_username = email.split('@')[0]
+            else:
+                base_username = f'apple_{apple_sub[:8]}'
+
+            username = base_username
+            counter = 1
+            while User.objects.filter(username=username).exists():
+                username = f'{base_username}{counter}'
+                counter += 1
+
+            user = User.objects.create_user(
+                username=username,
+                email=email or '',
+            )
+            user.is_active = True
+            user.save()
+
+        # Return JWT tokens
+        refresh = RefreshToken.for_user(user)
+        return Response({
+            'access': str(refresh.access_token),
+            'refresh': str(refresh),
+            'user': {
+                'id': user.id,
+                'username': user.username,
+                'email': user.email,
+                'first_name': user.first_name,
+                'is_instructor': user.is_instructor,
+            }
+        }, status=status.HTTP_200_OK)
+
+
 class PasswordResetRequestView(generics.GenericAPIView):
     permission_classes = (AllowAny,)
     serializer_class = PasswordResetRequestSerializer

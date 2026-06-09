@@ -39,7 +39,7 @@ const ForgotPassword = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  // ── Google Sign-In (recover via Google account) ──────────────────────────
+  // ── Google & Apple Sign-In (recover via social account) ──────────────────────────
   useEffect(() => {
     const initGoogle = () => {
       const g = (window as any).google;
@@ -60,7 +60,23 @@ const ForgotPassword = () => {
         },
       });
     };
-    const timer = setTimeout(initGoogle, 500);
+    
+    const initApple = () => {
+      const appleId = (window as any).AppleID;
+      if (appleId) {
+        appleId.auth.init({
+          clientId: import.meta.env.VITE_APPLE_CLIENT_ID || 'com.imraedu.web',
+          scope: 'name email',
+          redirectURI: window.location.origin + '/forgot-password',
+          usePopup: true
+        });
+      }
+    };
+
+    const timer = setTimeout(() => {
+      initGoogle();
+      initApple();
+    }, 500);
     return () => clearTimeout(timer);
   }, [login, navigate]);
 
@@ -68,6 +84,25 @@ const ForgotPassword = () => {
     const g = (window as any).google;
     if (g) g.accounts.id.prompt();
     else setErrorMessage('Google Sign-In is not available. Please use the email form below.');
+  };
+
+  const handleAppleRecover = async () => {
+    const appleId = (window as any).AppleID;
+    if (appleId) {
+      try {
+        const response = await appleId.auth.signIn();
+        setStatus('loading');
+        setErrorMessage('');
+        const res = await api.post('/auth/apple/', { token: response.authorization.id_token });
+        login(res.data.access, res.data.refresh);
+        navigate('/dashboard');
+      } catch (err: any) {
+        setStatus('error');
+        setErrorMessage(err.response?.data?.error || 'Apple Sign-In failed. Please try again.');
+      }
+    } else {
+      setErrorMessage('Apple Sign-In is not available.');
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -206,19 +241,19 @@ const ForgotPassword = () => {
                     <button
                       key={label}
                       type="button"
-                      onClick={key === 'google' ? handleGoogleRecover : undefined}
+                      onClick={key === 'google' ? handleGoogleRecover : key === 'apple' ? handleAppleRecover : undefined}
                       disabled={status === 'loading'}
                       style={{
                         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
                         gap: '0.4rem', padding: '0.875rem 0.5rem',
                         border: '1px solid var(--border-strong)', borderRadius: '12px',
-                        background: 'var(--bg-primary)', cursor: key === 'google' ? 'pointer' : 'not-allowed',
-                        opacity: key !== 'google' ? 0.5 : 1,
+                        background: 'var(--bg-primary)', cursor: key === 'google' || key === 'apple' ? 'pointer' : 'not-allowed',
+                        opacity: key !== 'google' && key !== 'apple' ? 0.5 : 1,
                         transition: 'all 0.2s', fontSize: '0.75rem', fontWeight: 600,
                         color: 'var(--text-secondary)',
                       }}
                       onMouseEnter={e => {
-                        if (key !== 'google') return;
+                        if (key !== 'google' && key !== 'apple') return;
                         (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--brand-blue)';
                         (e.currentTarget as HTMLButtonElement).style.background = 'var(--brand-blue-light)';
                         (e.currentTarget as HTMLButtonElement).style.color = 'var(--brand-blue)';

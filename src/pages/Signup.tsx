@@ -62,7 +62,7 @@ const Signup = () => {
   const set = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm(f => ({ ...f, [field]: e.target.value }));
 
-  // ── Google Sign-In ─────────────────────────────────────────────────────────
+  // ── Google & Apple Sign-In ─────────────────────────────────────────────────────────
   useEffect(() => {
     const initGoogle = () => {
       const g = (window as any).google;
@@ -84,7 +84,23 @@ const Signup = () => {
         },
       });
     };
-    const timer = setTimeout(initGoogle, 500);
+    
+    const initApple = () => {
+      const appleId = (window as any).AppleID;
+      if (appleId) {
+        appleId.auth.init({
+          clientId: import.meta.env.VITE_APPLE_CLIENT_ID || 'com.imraedu.web',
+          scope: 'name email',
+          redirectURI: window.location.origin + '/signup',
+          usePopup: true
+        });
+      }
+    };
+
+    const timer = setTimeout(() => {
+      initGoogle();
+      initApple();
+    }, 500);
     return () => clearTimeout(timer);
   }, [login, navigate]);
 
@@ -92,6 +108,25 @@ const Signup = () => {
     const g = (window as any).google;
     if (g) g.accounts.id.prompt();
     else setError('Google Sign-In is not available. Please use email sign-up.');
+  };
+
+  const handleAppleSignIn = async () => {
+    const appleId = (window as any).AppleID;
+    if (appleId) {
+      try {
+        const response = await appleId.auth.signIn();
+        setLoading(true);
+        setError('');
+        const res = await api.post('/auth/apple/', { token: response.authorization.id_token });
+        login(res.data.access, res.data.refresh);
+        navigate('/dashboard');
+      } catch (err: any) {
+        setError(err.response?.data?.error || 'Apple Sign-Up failed. Please try again.');
+        setLoading(false);
+      }
+    } else {
+      setError('Apple Sign-In is not available.');
+    }
   };
 
   // ── Email Signup ───────────────────────────────────────────────────────────
@@ -144,19 +179,19 @@ const Signup = () => {
               <button
                 key={key}
                 type="button"
-                onClick={key === 'google' ? handleGoogleSignIn : undefined}
+                onClick={key === 'google' ? handleGoogleSignIn : key === 'apple' ? handleAppleSignIn : undefined}
                 disabled={loading}
                 style={{
                   display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
                   gap: '0.35rem', padding: '0.75rem 0.5rem',
                   border: '1.5px solid var(--border-strong)', borderRadius: '12px',
-                  background: 'var(--bg-primary)', cursor: key === 'google' ? 'pointer' : 'not-allowed',
-                  opacity: key !== 'google' ? 0.5 : 1,
+                  background: 'var(--bg-primary)', cursor: key === 'google' || key === 'apple' ? 'pointer' : 'not-allowed',
+                  opacity: key !== 'google' && key !== 'apple' ? 0.5 : 1,
                   transition: 'all 0.2s', fontSize: '0.75rem', fontWeight: 600,
                   color: 'var(--text-secondary)',
                 }}
                 onMouseEnter={e => {
-                  if (key !== 'google') return;
+                  if (key !== 'google' && key !== 'apple') return;
                   const b = e.currentTarget;
                   b.style.borderColor = 'var(--brand-blue)';
                   b.style.background = 'var(--brand-blue-light)';

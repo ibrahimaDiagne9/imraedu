@@ -73,15 +73,25 @@ const Login = () => {
             }
           }
         });
-        
-        g.accounts.id.renderButton(
-          document.getElementById('google-signin-btn'),
-          { theme: 'outline', size: 'large', width: 420, text: 'signin_with', shape: 'rectangular' }
-        );
       }
     };
 
-    const timer = setTimeout(initializeGoogleSignIn, 500);
+    const initializeAppleSignIn = () => {
+      const appleId = (window as any).AppleID;
+      if (appleId) {
+        appleId.auth.init({
+          clientId: import.meta.env.VITE_APPLE_CLIENT_ID || 'com.imraedu.web',
+          scope: 'name email',
+          redirectURI: window.location.origin + '/login',
+          usePopup: true
+        });
+      }
+    };
+
+    const timer = setTimeout(() => {
+      initializeGoogleSignIn();
+      initializeAppleSignIn();
+    }, 500);
     return () => clearTimeout(timer);
   }, [login, navigate]);
 
@@ -171,24 +181,42 @@ const Login = () => {
               <button
                 key={key}
                 type="button"
-                onClick={() => {
-                  if (key !== 'google') return;
-                  const g = (window as any).google;
-                  if (g) g.accounts.id.prompt();
-                  else setError('Google Sign-In is not available.');
+                onClick={async () => {
+                  if (key === 'google') {
+                    const g = (window as any).google;
+                    if (g) g.accounts.id.prompt();
+                    else setError('Google Sign-In is not available.');
+                  } else if (key === 'apple') {
+                    const appleId = (window as any).AppleID;
+                    if (appleId) {
+                      try {
+                        const response = await appleId.auth.signIn();
+                        setLoading(true);
+                        setError('');
+                        const res = await api.post('/auth/apple/', { token: response.authorization.id_token });
+                        login(res.data.access, res.data.refresh);
+                        navigate('/dashboard');
+                      } catch (err: any) {
+                        setError(err.response?.data?.error || 'Apple Sign-In failed. Please try again.');
+                        setLoading(false);
+                      }
+                    } else {
+                      setError('Apple Sign-In is not available.');
+                    }
+                  }
                 }}
                 disabled={loading}
                 style={{
                   display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
                   gap: '0.35rem', padding: '0.75rem 0.5rem',
                   border: '1.5px solid var(--border-strong)', borderRadius: '12px',
-                  background: 'var(--bg-primary)', cursor: key === 'google' ? 'pointer' : 'not-allowed',
-                  opacity: key !== 'google' ? 0.5 : 1,
+                  background: 'var(--bg-primary)', cursor: key === 'google' || key === 'apple' ? 'pointer' : 'not-allowed',
+                  opacity: key !== 'google' && key !== 'apple' ? 0.5 : 1,
                   transition: 'all 0.2s', fontSize: '0.75rem', fontWeight: 600,
                   color: 'var(--text-secondary)',
                 }}
                 onMouseEnter={e => {
-                  if (key !== 'google') return;
+                  if (key !== 'google' && key !== 'apple') return;
                   const b = e.currentTarget;
                   b.style.borderColor = 'var(--brand-blue)';
                   b.style.background = 'var(--brand-blue-light)';
