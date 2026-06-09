@@ -198,75 +198,39 @@ const ForgotPassword = () => {
                 <p style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.875rem' }}>
                   Or recover via
                 </p>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.625rem' }}>
-
-                  {/* ── Google overlay ── */}
-                  <div
-                    style={{
-                      position: 'relative', overflow: 'hidden',
-                      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                      gap: '0.4rem', padding: '0.875rem 0.5rem',
-                      border: '1px solid var(--border-strong)', borderRadius: '12px',
-                      background: 'var(--bg-primary)', cursor: 'pointer',
-                      transition: 'all 0.2s', fontSize: '0.75rem', fontWeight: 600,
-                      color: 'var(--text-secondary)',
-                    }}
-                    onMouseEnter={e => {
-                      e.currentTarget.style.borderColor = 'var(--brand-blue)';
-                      e.currentTarget.style.background = 'var(--brand-blue-light)';
-                      e.currentTarget.style.color = 'var(--brand-blue)';
-                      e.currentTarget.style.transform = 'translateY(-2px)';
-                      e.currentTarget.style.boxShadow = 'var(--shadow-md)';
-                    }}
-                    onMouseLeave={e => {
-                      e.currentTarget.style.borderColor = 'var(--border-strong)';
-                      e.currentTarget.style.background = 'var(--bg-primary)';
-                      e.currentTarget.style.color = 'var(--text-secondary)';
-                      e.currentTarget.style.transform = 'translateY(0)';
-                      e.currentTarget.style.boxShadow = 'none';
-                    }}
-                  >
-                    <GoogleIcon />
-                    Google
-                    <div id="google-signin-overlay-forgot" style={{
-                      position: 'absolute', inset: 0, opacity: 0.01, overflow: 'hidden',
-                      display: 'flex', alignItems: 'stretch',
-                    }} />
-                  </div>
-
-                  {/* ── Apple: disabled ── */}
-                  <div
-                    title="Apple Sign-In requires an Apple Developer Service ID"
-                    style={{
-                      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                      gap: '0.4rem', padding: '0.875rem 0.5rem',
-                      border: '1px solid var(--border-strong)', borderRadius: '12px',
-                      background: 'var(--bg-primary)', cursor: 'not-allowed',
-                      opacity: 0.45, fontSize: '0.75rem', fontWeight: 600,
-                      color: 'var(--text-secondary)',
-                    }}
-                    onClick={() => setErrorMessage('Apple Sign-In requires an Apple Developer account. Contact the site admin to enable it.')}
-                  >
-                    <AppleIcon />
-                    Apple
-                  </div>
-
-                  {/* ── GitHub: coming soon ── */}
-                  <div
-                    style={{
-                      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                      gap: '0.4rem', padding: '0.875rem 0.5rem',
-                      border: '1px solid var(--border-strong)', borderRadius: '12px',
-                      background: 'var(--bg-primary)', cursor: 'not-allowed',
-                      opacity: 0.45, fontSize: '0.75rem', fontWeight: 600,
-                      color: 'var(--text-secondary)',
-                    }}
-                  >
-                    <GitHubIcon />
-                    GitHub
-                  </div>
-
-                </div>
+              {/* Google recover — full-width */}
+              <div
+                style={{
+                  position: 'relative', overflow: 'hidden',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  gap: '0.625rem', padding: '0.8rem 1.25rem',
+                  border: '1px solid var(--border-strong)', borderRadius: '12px',
+                  background: 'var(--bg-primary)', cursor: 'pointer',
+                  transition: 'all 0.2s', fontSize: '0.9rem', fontWeight: 600,
+                  color: 'var(--text-secondary)',
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.borderColor = 'var(--brand-blue)';
+                  e.currentTarget.style.background = 'var(--brand-blue-light)';
+                  e.currentTarget.style.color = 'var(--brand-blue)';
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                  e.currentTarget.style.boxShadow = 'var(--shadow-md)';
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.borderColor = 'var(--border-strong)';
+                  e.currentTarget.style.background = 'var(--bg-primary)';
+                  e.currentTarget.style.color = 'var(--text-secondary)';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
+              >
+                <GoogleIcon />
+                Recover with Google
+                <div id="google-signin-overlay-forgot" style={{
+                  position: 'absolute', inset: 0, opacity: 0.01, overflow: 'hidden',
+                  display: 'flex', alignItems: 'stretch',
+                }} />
+              </div>
               </div>
 
               {/* ── Divider ── */}

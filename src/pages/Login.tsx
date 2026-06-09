@@ -165,76 +165,38 @@ const Login = () => {
             <Link to="/signup" style={{ color: 'var(--brand-blue)', fontWeight: 600 }}>Sign up for free</Link>
           </p>
 
-          {/* Social buttons */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.625rem', marginBottom: '1.5rem' }}>
-
-            {/* ── Google: real button rendered in invisible overlay ── */}
-            <div
-              style={{
-                position: 'relative', overflow: 'hidden',
-                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                gap: '0.35rem', padding: '0.75rem 0.5rem',
-                border: '1.5px solid var(--border-strong)', borderRadius: '12px',
-                background: 'var(--bg-primary)', cursor: 'pointer',
-                transition: 'all 0.2s', fontSize: '0.75rem', fontWeight: 600,
-                color: 'var(--text-secondary)',
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.borderColor = 'var(--brand-blue)';
-                e.currentTarget.style.background = 'var(--brand-blue-light)';
-                e.currentTarget.style.color = 'var(--brand-blue)';
-                e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,86,210,0.15)';
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.borderColor = 'var(--border-strong)';
-                e.currentTarget.style.background = 'var(--bg-primary)';
-                e.currentTarget.style.color = 'var(--text-secondary)';
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = 'none';
-              }}
-            >
-              <GoogleIcon />
-              Google
-              {/* Transparent real Google button covering the entire div */}
-              <div id="google-signin-overlay-login" style={{
-                position: 'absolute', inset: 0, opacity: 0.01, overflow: 'hidden',
-                display: 'flex', alignItems: 'stretch',
-              }} />
-            </div>
-
-            {/* ── Apple: disabled until Apple Developer Service ID is configured ── */}
-            <div
-              title="Apple Sign-In requires an Apple Developer Service ID — contact admin"
-              style={{
-                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                gap: '0.35rem', padding: '0.75rem 0.5rem',
-                border: '1.5px solid var(--border-strong)', borderRadius: '12px',
-                background: 'var(--bg-primary)', cursor: 'not-allowed',
-                opacity: 0.45, fontSize: '0.75rem', fontWeight: 600,
-                color: 'var(--text-secondary)',
-              }}
-              onClick={() => setError('Apple Sign-In requires an Apple Developer account. Contact the site admin to enable it.')}
-            >
-              <AppleIcon />
-              Apple
-            </div>
-
-            {/* ── GitHub: coming soon ── */}
-            <div
-              style={{
-                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                gap: '0.35rem', padding: '0.75rem 0.5rem',
-                border: '1.5px solid var(--border-strong)', borderRadius: '12px',
-                background: 'var(--bg-primary)', cursor: 'not-allowed',
-                opacity: 0.45, fontSize: '0.75rem', fontWeight: 600,
-                color: 'var(--text-secondary)',
-              }}
-            >
-              <GitHubIcon />
-              GitHub
-            </div>
-
+          {/* Google Sign-In — full-width */}
+          <div
+            style={{
+              position: 'relative', overflow: 'hidden',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              gap: '0.625rem', padding: '0.8rem 1.25rem',
+              border: '1.5px solid var(--border-strong)', borderRadius: '12px',
+              background: 'var(--bg-primary)', cursor: 'pointer',
+              transition: 'all 0.2s', fontSize: '0.9rem', fontWeight: 600,
+              color: 'var(--text-secondary)', marginBottom: '1.5rem',
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.borderColor = 'var(--brand-blue)';
+              e.currentTarget.style.background = 'var(--brand-blue-light)';
+              e.currentTarget.style.color = 'var(--brand-blue)';
+              e.currentTarget.style.transform = 'translateY(-1px)';
+              e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,86,210,0.12)';
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.borderColor = 'var(--border-strong)';
+              e.currentTarget.style.background = 'var(--bg-primary)';
+              e.currentTarget.style.color = 'var(--text-secondary)';
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
+          >
+            <GoogleIcon />
+            Continue with Google
+            <div id="google-signin-overlay-login" style={{
+              position: 'absolute', inset: 0, opacity: 0.01, overflow: 'hidden',
+              display: 'flex', alignItems: 'stretch',
+            }} />
           </div>
 
           {/* Divider */}
