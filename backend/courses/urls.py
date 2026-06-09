@@ -17,6 +17,7 @@ instructor_router.register(r'choices', views.InstructorChoiceViewSet, basename='
 
 urlpatterns = [
     path('register/', views.RegisterView.as_view(), name='auth_register'),
+    path('verify-email/', views.VerifyEmailView.as_view(), name='verify_email'),
     path('me/', views.CurrentUserView.as_view(), name='current_user'),
     path('password-reset/', views.PasswordResetRequestView.as_view(), name='password_reset'),
     path('password-reset/confirm/', views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),

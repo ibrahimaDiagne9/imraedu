@@ -56,6 +56,7 @@ const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [registered, setRegistered] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -95,7 +96,7 @@ const Signup = () => {
   }, [login, navigate]);
 
 
-  // ── Email Signup ───────────────────────────────────────────────────────────
+  // ── Email Signup ─────────────────────────────────────────────────────────
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -107,7 +108,7 @@ const Signup = () => {
         email: form.email,
         password: form.password,
       });
-      navigate('/login');
+      setRegistered(true); // Show 'check your email' screen
     } catch (err: any) {
       setError(err.response?.data?.username?.[0] || err.response?.data?.email?.[0] || 'Registration failed. Please try again.');
     } finally {
@@ -133,6 +134,53 @@ const Signup = () => {
         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '3rem 2.5rem', overflowY: 'auto' }}>
         <div className="animate-fade-in" style={{ width: '100%', maxWidth: '420px' }}>
 
+          {registered ? (
+            /* ── Check your email screen ── */
+            <div style={{ textAlign: 'center' }}>
+              <div style={{
+                width: '80px', height: '80px', borderRadius: '50%',
+                background: 'linear-gradient(135deg, #0056D2, #0ea5e9)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                margin: '0 auto 1.75rem',
+                boxShadow: '0 8px 24px rgba(0,86,210,0.25)',
+              }}>
+                <CheckCircle2 size={42} color="white" />
+              </div>
+              <h2 style={{ fontSize: '1.75rem', fontWeight: 800, marginBottom: '0.5rem', letterSpacing: '-0.02em' }}>
+                Check your inbox!
+              </h2>
+              <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '1.25rem' }}>
+                We've sent a verification link to{' '}
+                <strong style={{ color: 'var(--text-primary)' }}>{form.email}</strong>.
+                Click it to activate your account.
+              </p>
+              <div style={{
+                background: 'var(--bg-secondary)', borderRadius: '12px',
+                padding: '1rem 1.25rem', marginBottom: '2rem',
+                fontSize: '0.875rem', color: 'var(--text-secondary)',
+                border: '1px solid var(--border-light)',
+              }}>
+                Didn't receive it?{' '}
+                <button
+                  onClick={() => setRegistered(false)}
+                  style={{ color: 'var(--brand-blue)', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                >
+                  Try again
+                </button>
+                {' '}or check your spam folder.
+              </div>
+              <Link
+                to="/login"
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
+                  fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-secondary)',
+                }}
+              >
+                ← Back to login
+              </Link>
+            </div>
+          ) : (
+            <>
           <h2 style={{ fontSize: '1.875rem', fontWeight: 800, marginBottom: '0.4rem', letterSpacing: '-0.02em' }}>Create your account</h2>
           <p style={{ color: 'var(--text-secondary)', marginBottom: '1.75rem', fontSize: '0.95rem' }}>
             Already have an account?{' '}
@@ -257,6 +305,8 @@ const Signup = () => {
               ) : 'Sign Up for Free'}
             </button>
           </form>
+          </>
+          )}
         </div>
       </div>
 

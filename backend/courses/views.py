@@ -5,7 +5,12 @@ from rest_framework.permissions import AllowAny, IsAuthenticated, BasePermission
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.core.files.storage import default_storage
+from django.core.mail import send_mail
 from django.contrib.auth import get_user_model
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.encoding import force_bytes, force_str
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from rest_framework_simplejwt.tokens import RefreshToken
 from .models import Course, Module, Lesson, Question, Choice, Enrollment
 from .serializers import (
     CourseSerializer, CourseWriteSerializer,
@@ -16,6 +21,8 @@ from .serializers import (
     EnrollmentSerializer, RegisterSerializer, UserSerializer,
     PasswordResetRequestSerializer, PasswordResetConfirmSerializer
 )
+import requests
+import os
 
 User = get_user_model()
 
@@ -35,9 +42,104 @@ class IsInstructorOwner(BasePermission):
 # ─── Auth ────────────────────────────────────────────────────────────────────
 
 class RegisterView(generics.CreateAPIView):
+    """Register new user and send verification email (account inactive until verified)."""
     queryset = User.objects.all()
     permission_classes = (AllowAny,)
     serializer_class = RegisterSerializer
+
+    def perform_create(self, serializer):
+        user = serializer.save()
+        user.is_active = False
+        user.save()
+
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        token = default_token_generator.make_token(user)
+        frontend_url = (
+            self.request.headers.get('origin')
+            or os.getenv('FRONTEND_URL', 'http://localhost:5173')
+        )
+        verify_url = f"{frontend_url}/verify-email?uidb64={uid}&token={token}"
+
+        send_mail(
+            subject='Verify your ImraEdu account',
+            message=(
+                f"Hi {user.first_name or user.username},\n\n"
+                f"Thanks for signing up for ImraEdu!\n"
+                f"Please verify your email:\n{verify_url}\n\n"
+                f"This link expires in 24 hours.\n"
+                f"If you didn't create this account, ignore this email."
+            ),
+            html_message=(
+                "<div style='font-family:Inter,sans-serif;max-width:520px;margin:auto;padding:32px;'>"
+                "<h2 style='color:#0056D2;'>Welcome to ImraEdu!</h2>"
+                f"<p>Hi <strong>{user.first_name or user.username}</strong>,</p>"
+                "<p>Click the button below to verify your email and activate your account.</p>"
+                f"<a href='{verify_url}' style='display:inline-block;margin:20px 0;padding:14px 28px;"
+                "background:linear-gradient(135deg,#0056D2,#0ea5e9);color:white;"
+                "border-radius:10px;text-decoration:none;font-weight:700;font-size:15px;'>"
+                "Verify Email Address</a>"
+                f"<p style='color:#666;font-size:13px;'>Or paste: <a href='{verify_url}'>{verify_url}</a></p>"
+                "<p style='color:#999;font-size:12px;'>Link expires in 24 hours.</p>"
+                "</div>"
+            ),
+            from_email=os.getenv('DEFAULT_FROM_EMAIL', 'noreply@imraedu.com'),
+            recipient_list=[user.email],
+            fail_silently=False,
+        )
+
+
+class VerifyEmailView(APIView):
+    """Activate account via uidb64 + token from verification email. Returns JWT on success."""
+    permission_classes = (AllowAny,)
+
+    def get(self, request, *args, **kwargs):
+        uidb64 = request.query_params.get('uidb64')
+        token = request.query_params.get('token')
+
+        if not uidb64 or not token:
+            return Response(
+                {'error': 'Missing verification parameters.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            uid = force_str(urlsafe_base64_decode(uidb64))
+            user = User.objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            return Response(
+                {'error': 'Invalid verification link.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if user.is_active:
+            return Response(
+                {'message': 'Account already verified. You can log in.'},
+                status=status.HTTP_200_OK
+            )
+
+        if not default_token_generator.check_token(user, token):
+            return Response(
+                {'error': 'Verification link has expired or is invalid.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        user.is_active = True
+        user.save()
+
+        # Auto-login: return JWT so user lands directly on dashboard
+        refresh = RefreshToken.for_user(user)
+        return Response({
+            'message': 'Email verified! Welcome to ImraEdu.',
+            'access': str(refresh.access_token),
+            'refresh': str(refresh),
+            'user': {
+                'id': user.id,
+                'username': user.username,
+                'email': user.email,
+                'first_name': user.first_name,
+                'is_instructor': user.is_instructor,
+            }
+        }, status=status.HTTP_200_OK)
 
 
 class CurrentUserView(generics.RetrieveUpdateAPIView):
