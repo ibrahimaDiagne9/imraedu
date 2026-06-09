@@ -145,3 +145,36 @@ class Review(models.Model):
             self.course.save()
 
 
+class LessonCompletion(models.Model):
+    user = models.ForeignKey(User, related_name='completed_lessons', on_delete=models.CASCADE)
+    lesson = models.ForeignKey(Lesson, related_name='completions', on_delete=models.CASCADE)
+    completed_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'lesson')
+
+    def __str__(self):
+        return f"{self.user.username} completed {self.lesson.title}"
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.update_enrollment_progress()
+
+    def update_enrollment_progress(self):
+        try:
+            enrollment = Enrollment.objects.get(user=self.user, course=self.lesson.module.course)
+            total_lessons = Lesson.objects.filter(module__course=enrollment.course).count()
+            completed_lessons = LessonCompletion.objects.filter(
+                user=self.user, 
+                lesson__module__course=enrollment.course
+            ).count()
+            
+            if total_lessons > 0:
+                enrollment.progress_percentage = min(100, int((completed_lessons / total_lessons) * 100))
+                if enrollment.progress_percentage == 100:
+                    enrollment.completed = True
+                enrollment.save()
+        except Enrollment.DoesNotExist:
+            pass
+
+

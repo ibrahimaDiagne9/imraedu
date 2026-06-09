@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { ChevronLeft, PlayCircle, FileText, HelpCircle, CheckCircle2, XCircle } from 'lucide-react';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { ChevronLeft, PlayCircle, FileText, HelpCircle, CheckCircle2, XCircle, Check } from 'lucide-react';
 import api from '../api';
 
 const fetchEnrollments = async () => {
@@ -49,13 +49,21 @@ const CoursePlayer = () => {
     enabled: !!id,
   });
 
-  const { data: enrollments = [] } = useQuery({
+  const { data: enrollments = [], refetch: refetchEnrollments } = useQuery({
     queryKey: ['enrollments'],
     queryFn: fetchEnrollments,
   });
 
   const enrollment = enrollments.find((e: any) => String(e.course?.id) === id);
   const progressPercentage = enrollment?.progress_percentage ?? 0;
+  const completedLessons = enrollment?.completed_lessons || [];
+
+  const completeLessonMutation = useMutation({
+    mutationFn: (lessonId: number) => api.post(`/courses/${id}/complete-lesson/`, { lesson_id: lessonId }),
+    onSuccess: () => {
+      refetchEnrollments();
+    }
+  });
 
   useEffect(() => {
     if (course && course.modules && course.modules.length > 0 && !activeLesson) {
@@ -132,10 +140,15 @@ const CoursePlayer = () => {
                               <FileText size={16} className={isActive ? "text-brand" : "text-secondary"} />
                             )}
                           </div>
-                          <div>
+                          <div style={{ flex: 1 }}>
                             <div className={`text-small ${isActive ? 'font-semibold text-brand' : 'text-primary'}`}>{lesson.title}</div>
                             <div className="text-xs text-tertiary" style={{ fontSize: '0.75rem' }}>{lesson.lesson_type.charAt(0).toUpperCase() + lesson.lesson_type.slice(1)} • {lesson.duration}</div>
                           </div>
+                          {completedLessons.includes(lesson.id) && (
+                            <div className="mt-xs">
+                              <CheckCircle2 size={16} className="text-accent-green" />
+                            </div>
+                          )}
                         </li>
                       );
                     })}
@@ -177,6 +190,22 @@ const CoursePlayer = () => {
               ) : (
                 <p className="text-body-large text-tertiary italic">Reading content not provided.</p>
               )}
+              
+              <div className="mt-2xl flex justify-center border-t pt-xl" style={{ borderTop: '1px solid var(--border-light)' }}>
+                {completedLessons.includes(activeLesson.id) ? (
+                  <button className="btn btn-secondary flex items-center gap-sm" disabled>
+                    <Check size={18} /> Completed
+                  </button>
+                ) : (
+                  <button 
+                    className="btn btn-primary flex items-center gap-sm"
+                    onClick={() => completeLessonMutation.mutate(activeLesson.id)}
+                    disabled={completeLessonMutation.isPending}
+                  >
+                    <Check size={18} /> Mark as Complete
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         ) : activeLesson && activeLesson.lesson_type === 'quiz' ? (
@@ -265,6 +294,22 @@ const CoursePlayer = () => {
                       </button>
                     </div>
                   )}
+                  
+                  <div className="mt-2xl flex justify-center border-t pt-xl" style={{ borderTop: '1px solid var(--border-light)' }}>
+                    {completedLessons.includes(activeLesson.id) ? (
+                      <button className="btn btn-secondary flex items-center gap-sm" disabled>
+                        <Check size={18} /> Completed
+                      </button>
+                    ) : (
+                      <button 
+                        className="btn btn-primary flex items-center gap-sm"
+                        onClick={() => completeLessonMutation.mutate(activeLesson.id)}
+                        disabled={completeLessonMutation.isPending}
+                      >
+                        <Check size={18} /> Mark as Complete
+                      </button>
+                    )}
+                  </div>
                 </div>
               )}
             </div>
@@ -309,6 +354,23 @@ const CoursePlayer = () => {
               {activeTab === 'notes' && (
                 <p className="text-secondary">Take notes here while you watch the video...</p>
               )}
+              
+              <div className="mt-2xl flex justify-between items-center border-t pt-xl" style={{ borderTop: '1px solid var(--border-light)' }}>
+                <div></div>
+                {completedLessons.includes(activeLesson.id) ? (
+                  <button className="btn btn-secondary flex items-center gap-sm" disabled>
+                    <Check size={18} /> Completed
+                  </button>
+                ) : (
+                  <button 
+                    className="btn btn-primary flex items-center gap-sm"
+                    onClick={() => completeLessonMutation.mutate(activeLesson.id)}
+                    disabled={completeLessonMutation.isPending}
+                  >
+                    <Check size={18} /> Mark as Complete
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         )}

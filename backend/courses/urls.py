@@ -20,6 +20,7 @@ urlpatterns = [
     path('verify-email/', views.VerifyEmailView.as_view(), name='verify_email'),
     path('apply-instructor/', views.InstructorApplicationView.as_view(), name='apply_instructor'),
     path('courses/<int:course_id>/reviews/', views.CourseReviewView.as_view(), name='course_reviews'),
+    path('courses/<int:course_id>/complete-lesson/', views.CompleteLessonView.as_view(), name='complete_lesson'),
     path('me/', views.CurrentUserView.as_view(), name='current_user'),
     path('password-reset/', views.PasswordResetRequestView.as_view(), name='password_reset'),
     path('password-reset/confirm/', views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),

@@ -121,10 +121,19 @@ class CourseWriteSerializer(serializers.ModelSerializer):
 
 class EnrollmentSerializer(serializers.ModelSerializer):
     course = CourseSerializer(read_only=True)
+    completed_lessons = serializers.SerializerMethodField()
 
     class Meta:
         model = Enrollment
-        fields = ['id', 'course', 'progress_percentage', 'completed', 'enrolled_at']
+        fields = ['id', 'course', 'progress_percentage', 'completed', 'enrolled_at', 'completed_lessons']
+
+    def get_completed_lessons(self, obj):
+        from .models import LessonCompletion
+        completions = LessonCompletion.objects.filter(
+            user=obj.user,
+            lesson__module__course=obj.course
+        ).values_list('lesson_id', flat=True)
+        return list(completions)
 
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_decode

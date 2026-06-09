@@ -11,7 +11,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from rest_framework_simplejwt.tokens import RefreshToken
-from .models import Course, Module, Lesson, Question, Choice, Enrollment, InstructorApplication, Review
+from .models import Course, Module, Lesson, Question, Choice, Enrollment, InstructorApplication, Review, LessonCompletion
 from .serializers import (
     CourseSerializer, CourseWriteSerializer,
     ModuleSerializer, ModuleWriteSerializer,
@@ -603,3 +603,28 @@ class CourseReviewView(APIView):
             serializer.save(user=request.user, course_id=course_id)
             return Response(serializer.data, status=status.HTTP_201_CREATED if not review else status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class CompleteLessonView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, course_id):
+        lesson_id = request.data.get('lesson_id')
+        if not lesson_id:
+            return Response({"detail": "lesson_id is required."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            lesson = Lesson.objects.get(id=lesson_id, module__course_id=course_id)
+        except Lesson.DoesNotExist:
+            return Response({"detail": "Lesson not found in this course."}, status=status.HTTP_404_NOT_FOUND)
+            
+        enrolled = Enrollment.objects.filter(user=request.user, course_id=course_id).exists()
+        if not enrolled:
+            return Response({"detail": "You must be enrolled to complete a lesson."}, status=status.HTTP_403_FORBIDDEN)
+            
+        completion, created = LessonCompletion.objects.get_or_create(
+            user=request.user,
+            lesson=lesson
+        )
+        
+        enrollment = Enrollment.objects.get(user=request.user, course_id=course_id)
+        return Response({"progress_percentage": enrollment.progress_percentage}, status=status.HTTP_200_OK)
