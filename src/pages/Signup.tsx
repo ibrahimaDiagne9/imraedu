@@ -69,7 +69,7 @@ const Signup = () => {
       const g = (window as any).google;
       if (!g) return;
       g.accounts.id.initialize({
-        client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID || '1081395352601-nb8o7k7qfej9iic5c7t4c12h32uolb67.apps.googleusercontent.com',
+        client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID || '943815507074-2of3v46l8e5sc28rluag3g73p4405rog.apps.googleusercontent.com',
         callback: async (response: any) => {
           setLoading(true);
           setError('');
