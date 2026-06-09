@@ -97,7 +97,7 @@ class CourseSerializer(serializers.ModelSerializer):
         model = Course
         fields = [
             'id', 'title', 'provider', 'description', 'rating', 'reviews',
-            'level', 'duration', 'image_color', 'thumbnail_url',
+            'level', 'category', 'duration', 'image_color', 'thumbnail_url',
             'is_published', 'created_at', 'modules', 'instructor_name',
             'enrollment_count'
         ]
@@ -115,7 +115,7 @@ class CourseWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
         fields = [
-            'id', 'title', 'provider', 'description', 'level',
+            'id', 'title', 'provider', 'description', 'level', 'category',
             'duration', 'image_color', 'thumbnail_url', 'is_published'
         ]
 

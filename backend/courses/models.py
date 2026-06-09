@@ -46,6 +46,16 @@ class Course(models.Model):
         ('Mixed', 'Mixed'),
     ]
     level = models.CharField(max_length=50, choices=LEVEL_CHOICES, default='Beginner')
+
+    CATEGORY_CHOICES = [
+        ('Technology', 'Technology'),
+        ('Business', 'Business'),
+        ('Arts & Design', 'Arts & Design'),
+        ('Health & Science', 'Health & Science'),
+        ('Languages', 'Languages'),
+        ('Other', 'Other')
+    ]
+    category = models.CharField(max_length=50, choices=CATEGORY_CHOICES, default='Other')
     duration = models.CharField(max_length=100, blank=True, default='') # e.g. '2 months', '6 weeks'
     image_color = models.CharField(max_length=50, default='#EBF3FF') # fallback for styling
     created_at = models.DateTimeField(default=timezone.now)

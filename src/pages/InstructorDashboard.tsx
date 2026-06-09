@@ -18,7 +18,7 @@ const InstructorDashboard = () => {
   const queryClient = useQueryClient();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [form, setForm] = useState({
-    title: '', description: '', level: 'Beginner',
+    title: '', description: '', level: 'Beginner', category: 'Other',
     duration: '', image_color: '#EBF3FF', thumbnail_url: '', is_published: false
   });
 
@@ -32,7 +32,7 @@ const InstructorDashboard = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['instructor-courses'] });
       setShowCreateModal(false);
-      setForm({ title: '', description: '', level: 'Beginner', duration: '', image_color: '#EBF3FF', thumbnail_url: '', is_published: false });
+      setForm({ title: '', description: '', level: 'Beginner', category: 'Other', duration: '', image_color: '#EBF3FF', thumbnail_url: '', is_published: false });
     },
   });
 
@@ -275,7 +275,16 @@ const InstructorDashboard = () => {
                   placeholder="What will learners gain from this course?"
                   value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} />
               </div>
-              <div className="split-grid">
+              <div className="grid grid-cols-3 gap-md">
+                <div>
+                  <label style={{ display: 'block', fontWeight: 600, marginBottom: '0.4rem', fontSize: '0.9rem' }}>Category</label>
+                  <select style={inputStyle} value={form.category}
+                    onChange={e => setForm(f => ({ ...f, category: e.target.value }))}>
+                    {['Technology', 'Business', 'Arts & Design', 'Health & Science', 'Languages', 'Other'].map(c => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </select>
+                </div>
                 <div>
                   <label style={{ display: 'block', fontWeight: 600, marginBottom: '0.4rem', fontSize: '0.9rem' }}>Level</label>
                   <select style={inputStyle} value={form.level}

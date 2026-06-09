@@ -111,6 +111,7 @@ const CourseEditor = () => {
         title: courseForm.title,
         description: courseForm.description,
         level: courseForm.level,
+        category: courseForm.category,
         duration: courseForm.duration,
         image_color: courseForm.image_color,
         thumbnail_url: courseForm.thumbnail_url,
@@ -557,7 +558,14 @@ const CourseEditor = () => {
                     value={cf.description || ''}
                     onChange={e => setCourseForm((f: any) => ({ ...f, description: e.target.value }))} />
                 </div>
-                <div className="split-grid">
+                <div className="grid grid-cols-3 gap-md">
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.35rem' }}>Category</label>
+                    <select style={inputStyle} value={cf.category || 'Other'}
+                      onChange={e => setCourseForm((f: any) => ({ ...f, category: e.target.value }))}>
+                      {['Technology', 'Business', 'Arts & Design', 'Health & Science', 'Languages', 'Other'].map(c => <option key={c}>{c}</option>)}
+                    </select>
+                  </div>
                   <div>
                     <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.35rem' }}>Level</label>
                     <select style={inputStyle} value={cf.level || 'Beginner'}

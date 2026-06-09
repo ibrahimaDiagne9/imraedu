@@ -17,11 +17,18 @@ const Catalog = () => {
   const initialSearch = searchParams.get('search') || '';
   const [searchQuery, setSearchQuery] = useState(initialSearch);
   const [selectedLevels, setSelectedLevels] = useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
 
   const toggleLevel = (level: string) => {
     setSelectedLevels(prev =>
       prev.includes(level) ? prev.filter(l => l !== level) : [...prev, level]
+    );
+  };
+
+  const toggleCategory = (cat: string) => {
+    setSelectedCategories(prev =>
+      prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat]
     );
   };
 
@@ -42,7 +49,8 @@ const Catalog = () => {
       (c.description && c.description.toLowerCase().includes(searchQuery.toLowerCase())) ||
       (c.instructor_name && c.instructor_name.toLowerCase().includes(searchQuery.toLowerCase()));
     const matchesLevel = selectedLevels.length === 0 || selectedLevels.includes(c.level);
-    return matchesSearch && matchesLevel;
+    const matchesCategory = selectedCategories.length === 0 || selectedCategories.includes(c.category);
+    return matchesSearch && matchesLevel && matchesCategory;
   });
 
   return (
@@ -73,11 +81,16 @@ const Catalog = () => {
             </div>
             
             <div className="mb-lg">
-              <h4 className="font-semibold mb-sm text-small">Subject</h4>
+              <h4 className="font-semibold mb-sm text-small">Category</h4>
               <div className="flex-col gap-xs text-small">
-                {['Data Science', 'Business', 'Computer Science', 'Health', 'Arts and Humanities'].map(subject => (
-                  <label key={subject} className="flex items-center gap-sm" style={{ cursor: 'pointer' }}>
-                    <input type="checkbox" /> <span>{subject}</span>
+                {['Technology', 'Business', 'Arts & Design', 'Health & Science', 'Languages', 'Other'].map(cat => (
+                  <label key={cat} className="flex items-center gap-sm" style={{ cursor: 'pointer' }}>
+                    <input 
+                      type="checkbox" 
+                      checked={selectedCategories.includes(cat)}
+                      onChange={() => toggleCategory(cat)}
+                    /> 
+                    <span style={{ fontWeight: selectedCategories.includes(cat) ? 600 : 400, color: selectedCategories.includes(cat) ? 'var(--brand-blue)' : 'inherit' }}>{cat}</span>
                   </label>
                 ))}
               </div>

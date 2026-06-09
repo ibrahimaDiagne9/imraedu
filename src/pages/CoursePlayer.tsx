@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { ChevronLeft, PlayCircle, FileText, HelpCircle, CheckCircle2, XCircle, Check } from 'lucide-react';
+import { ChevronLeft, PlayCircle, FileText, HelpCircle, CheckCircle2, XCircle, Check, Star } from 'lucide-react';
 import api from '../api';
 
 const fetchEnrollments = async () => {
@@ -42,6 +42,21 @@ const CoursePlayer = () => {
   // Quiz State
   const [quizAnswers, setQuizAnswers] = useState<Record<number, number>>({});
   const [quizSubmitted, setQuizSubmitted] = useState(false);
+
+  // Review State
+  const [rating, setRating] = useState(5);
+  const [reviewText, setReviewText] = useState('');
+  const [reviewStatus, setReviewStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+
+  const submitReviewMutation = useMutation({
+    mutationFn: () => api.post(`/courses/${id}/reviews/`, { rating, text: reviewText }),
+    onMutate: () => setReviewStatus('loading'),
+    onSuccess: () => {
+      setReviewStatus('success');
+      setReviewText('');
+    },
+    onError: () => setReviewStatus('error')
+  });
 
   const { data: course, isLoading, isError } = useQuery({
     queryKey: ['course', id],
@@ -371,6 +386,45 @@ const CoursePlayer = () => {
                   </button>
                 )}
               </div>
+
+              {progressPercentage === 100 && (
+                <div className="mt-3xl p-xl" style={{ backgroundColor: 'var(--brand-blue-light)', borderRadius: 'var(--radius-xl)' }}>
+                  <h3 className="text-h3 mb-md text-brand">Congratulations on finishing the course! 🎉</h3>
+                  <p className="text-secondary mb-lg">Please take a moment to leave a review and help other students.</p>
+                  
+                  {reviewStatus === 'success' ? (
+                    <div className="text-brand font-semibold flex items-center gap-sm">
+                      <CheckCircle2 size={20} /> Thank you for your review!
+                    </div>
+                  ) : (
+                    <div>
+                      <div className="flex items-center gap-sm mb-md text-brand">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <button key={star} type="button" onClick={() => setRating(star)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
+                            <Star size={28} fill={star <= rating ? 'currentColor' : 'none'} color={star <= rating ? '#FACC15' : 'var(--text-tertiary)'} />
+                          </button>
+                        ))}
+                      </div>
+                      <textarea
+                        value={reviewText}
+                        onChange={(e) => setReviewText(e.target.value)}
+                        placeholder="How was the course?"
+                        rows={3}
+                        className="w-full mb-md"
+                        style={{ padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-strong)', outline: 'none', resize: 'vertical' }}
+                      />
+                      <button
+                        onClick={() => submitReviewMutation.mutate()}
+                        disabled={reviewStatus === 'loading'}
+                        className="btn btn-primary"
+                      >
+                        {reviewStatus === 'loading' ? 'Submitting...' : 'Submit Review'}
+                      </button>
+                      {reviewStatus === 'error' && <p className="text-accent-red mt-sm text-small">Failed to submit review.</p>}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         )}
