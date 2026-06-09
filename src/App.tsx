@@ -42,6 +42,9 @@ function App() {
             <Route path="/partners" element={<GenericFooterPage title="Partners" />} />
             <Route path="/apply-to-teach" element={<ApplyToTeach />} />
             <Route path="/investors" element={<GenericFooterPage title="Investors" />} />
+            <Route path="/settings" element={<ProtectedRoute><GenericFooterPage title="Parameters & Settings" /></ProtectedRoute>} />
+            <Route path="/accomplishments" element={<ProtectedRoute><GenericFooterPage title="Accomplishments & Certificates" /></ProtectedRoute>} />
+            <Route path="/help" element={<GenericFooterPage title="Help Center" />} />
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             <Route path="/course/:id" element={<CourseDetails />} />

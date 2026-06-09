@@ -135,6 +135,10 @@ ul {
 .grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 
 /* Buttons */
+.dropdown-item:hover {
+  background-color: var(--bg-secondary);
+}
+
 .btn {
   display: inline-flex;
   align-items: center;
