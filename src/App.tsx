@@ -10,6 +10,9 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profile';
+import Settings from './pages/Settings';
+import Accomplishments from './pages/Accomplishments';
+import Help from './pages/Help';
 import Certificate from './pages/Certificate';
 import InstructorDashboard from './pages/InstructorDashboard';
 import CourseEditor from './pages/CourseEditor';
@@ -42,9 +45,9 @@ function App() {
             <Route path="/partners" element={<GenericFooterPage title="Partners" />} />
             <Route path="/apply-to-teach" element={<ApplyToTeach />} />
             <Route path="/investors" element={<GenericFooterPage title="Investors" />} />
-            <Route path="/settings" element={<ProtectedRoute><GenericFooterPage title="Parameters & Settings" /></ProtectedRoute>} />
-            <Route path="/accomplishments" element={<ProtectedRoute><GenericFooterPage title="Accomplishments & Certificates" /></ProtectedRoute>} />
-            <Route path="/help" element={<GenericFooterPage title="Help Center" />} />
+            <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+            <Route path="/accomplishments" element={<ProtectedRoute><Accomplishments /></ProtectedRoute>} />
+            <Route path="/help" element={<Help />} />
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             <Route path="/course/:id" element={<CourseDetails />} />
