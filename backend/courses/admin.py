@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User, Course, Module, Lesson, Enrollment, Question, Choice
+from .models import User, Course, Module, Lesson, Enrollment, Question, Choice, InstructorApplication
 
 class ModuleInline(admin.TabularInline):
     model = Module
@@ -43,3 +43,27 @@ class QuestionAdmin(admin.ModelAdmin):
 @admin.register(Choice)
 class ChoiceAdmin(admin.ModelAdmin):
     list_display = ('text', 'question', 'is_correct')
+
+from django.utils import timezone
+
+@admin.register(InstructorApplication)
+class InstructorApplicationAdmin(admin.ModelAdmin):
+    list_display = ('user', 'status', 'applied_at')
+    list_filter = ('status',)
+    actions = ['approve_applications', 'reject_applications']
+
+    def approve_applications(self, request, queryset):
+        for application in queryset:
+            application.status = 'Approved'
+            application.reviewed_at = timezone.now()
+            application.save()
+            application.user.is_instructor = True
+            application.user.save()
+        self.message_user(request, f"Approved {queryset.count()} application(s). Users are now instructors.")
+    approve_applications.short_description = "Approve selected applications"
+
+    def reject_applications(self, request, queryset):
+        queryset.update(status='Rejected', reviewed_at=timezone.now())
+        self.message_user(request, f"Rejected {queryset.count()} application(s).")
+    reject_applications.short_description = "Reject selected applications"
+

@@ -21,7 +21,7 @@ const Footer = () => {
           <ul className="flex-col gap-sm">
             <li><Link to="/learners" className="text-small text-tertiary hover-scale" style={{ display: 'inline-block' }}>Learners</Link></li>
             <li><Link to="/partners" className="text-small text-tertiary hover-scale" style={{ display: 'inline-block' }}>Partners</Link></li>
-            <li><Link to="/teaching-center" className="text-small text-tertiary hover-scale" style={{ display: 'inline-block' }}>Teaching Center</Link></li>
+            <li><Link to="/apply-to-teach" className="text-small text-tertiary hover-scale" style={{ display: 'inline-block' }}>Apply to Teach</Link></li>
           </ul>
         </div>
         <div>

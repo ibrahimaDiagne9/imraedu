@@ -9,6 +9,23 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
 
+class InstructorApplication(models.Model):
+    STATUS_CHOICES = [
+        ('Pending', 'Pending'),
+        ('Approved', 'Approved'),
+        ('Rejected', 'Rejected'),
+    ]
+    user = models.OneToOneField(User, related_name='instructor_application', on_delete=models.CASCADE)
+    expertise = models.CharField(max_length=255)
+    experience = models.TextField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
+    applied_at = models.DateTimeField(auto_now_add=True)
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.status}"
+
+
 class Course(models.Model):
     instructor = models.ForeignKey(
         'User', related_name='courses_taught',

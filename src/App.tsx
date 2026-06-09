@@ -16,6 +16,7 @@ import CourseEditor from './pages/CourseEditor';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import VerifyEmail from './pages/VerifyEmail';
+import ApplyToTeach from './pages/ApplyToTeach';
 import { About, Careers, Press, Terms, Privacy, GenericFooterPage } from './pages/StaticPages';
 
 function App() {
@@ -39,7 +40,7 @@ function App() {
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/learners" element={<GenericFooterPage title="Learners Community" />} />
             <Route path="/partners" element={<GenericFooterPage title="Partners" />} />
-            <Route path="/teaching-center" element={<GenericFooterPage title="Teaching Center" />} />
+            <Route path="/apply-to-teach" element={<ApplyToTeach />} />
             <Route path="/investors" element={<GenericFooterPage title="Investors" />} />
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />

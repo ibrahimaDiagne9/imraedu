@@ -1,5 +1,12 @@
 from rest_framework import serializers
-from .models import User, Course, Module, Lesson, Question, Choice, Enrollment
+from .models import User, Course, Module, Lesson, Question, Choice, Enrollment, InstructorApplication
+
+class InstructorApplicationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = InstructorApplication
+        fields = ['id', 'expertise', 'experience', 'status', 'applied_at']
+        read_only_fields = ['status', 'applied_at']
+
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:

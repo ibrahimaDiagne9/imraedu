@@ -11,7 +11,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from rest_framework_simplejwt.tokens import RefreshToken
-from .models import Course, Module, Lesson, Question, Choice, Enrollment
+from .models import Course, Module, Lesson, Question, Choice, Enrollment, InstructorApplication
 from .serializers import (
     CourseSerializer, CourseWriteSerializer,
     ModuleSerializer, ModuleWriteSerializer,
@@ -19,7 +19,8 @@ from .serializers import (
     QuestionSerializer, QuestionWriteSerializer,
     ChoiceSerializer, ChoiceWriteSerializer,
     EnrollmentSerializer, RegisterSerializer, UserSerializer,
-    PasswordResetRequestSerializer, PasswordResetConfirmSerializer
+    PasswordResetRequestSerializer, PasswordResetConfirmSerializer,
+    InstructorApplicationSerializer
 )
 import requests
 import os
@@ -551,3 +552,25 @@ class PasswordResetConfirmView(generics.GenericAPIView):
         user.set_password(serializer.validated_data['new_password'])
         user.save()
         return Response({"message": "Password reset successful"}, status=status.HTTP_200_OK)
+
+class InstructorApplicationView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        try:
+            application = InstructorApplication.objects.get(user=request.user)
+            serializer = InstructorApplicationSerializer(application)
+            return Response(serializer.data)
+        except InstructorApplication.DoesNotExist:
+            return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+
+    def post(self, request):
+        try:
+            application = InstructorApplication.objects.get(user=request.user)
+            return Response({"detail": "You have already applied."}, status=status.HTTP_400_BAD_REQUEST)
+        except InstructorApplication.DoesNotExist:
+            serializer = InstructorApplicationSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save(user=request.user)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
