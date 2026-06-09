@@ -4,6 +4,7 @@ import Hero from '../components/Hero';
 import CourseCard from '../components/CourseCard';
 import { CourseSkeleton } from '../components/Skeletons';
 import SEO from '../components/SEO';
+import { useAuth } from '../context/AuthContext';
 import api from '../api';
 
 const fetchCourses = async () => {
@@ -12,6 +13,7 @@ const fetchCourses = async () => {
 };
 
 const Home = () => {
+  const { user } = useAuth();
   const { data: courses = [], isLoading } = useQuery({
     queryKey: ['courses'],
     queryFn: fetchCourses,
@@ -56,7 +58,11 @@ const Home = () => {
             <p className="text-body-large text-secondary mb-xl">
               ImraEdu provides free, unlimited access to world-class educational content. We believe everyone deserves the opportunity to learn and grow without financial barriers.
             </p>
-            <Link to="/signup" className="btn btn-primary" style={{ padding: '0.75rem 2rem', fontSize: '1.125rem' }}>Start your journey today</Link>
+            {user ? (
+              <Link to="/catalog" className="btn btn-primary" style={{ padding: '0.75rem 2rem', fontSize: '1.125rem' }}>Continue your journey</Link>
+            ) : (
+              <Link to="/signup" className="btn btn-primary" style={{ padding: '0.75rem 2rem', fontSize: '1.125rem' }}>Start your journey today</Link>
+            )}
           </div>
           <div className="split-grid">
             <div style={{ backgroundColor: 'var(--brand-blue-light)', padding: '2rem', borderRadius: 'var(--radius-lg)', textAlign: 'center' }}>
