@@ -84,7 +84,7 @@ const Certificate = () => {
             border: '6px solid var(--brand-blue)',
             outline: '2px solid var(--brand-blue)',
             outlineOffset: '-16px',
-            padding: '3rem',
+            padding: '2rem 3rem',
             height: '100%',
             display: 'flex',
             flexDirection: 'column',
@@ -103,44 +103,44 @@ const Certificate = () => {
               <img src="/image/IMRAEDU.png" style={{ width: '600px' }} alt="" />
             </div>
 
-            <div className="flex flex-col items-center justify-center mb-xl gap-md relative z-10">
-              <img src="/image/IMRAEDU.png" width="220" height="auto" alt="ImraEdu Logo" />
+            <div className="flex flex-col items-center justify-center mb-md gap-sm relative z-10">
+              <img src="/image/IMRAEDU.png" width="200" height="auto" alt="ImraEdu Logo" />
             </div>
 
-            <div className="text-center relative z-10">
-              <h2 className="text-tertiary tracking-[0.3em] uppercase mb-lg" style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--brand-blue)' }}>Certificate of Completion</h2>
+            <div className="text-center relative z-10 flex-1 flex flex-col justify-center">
+              <h2 className="text-tertiary tracking-[0.3em] uppercase mb-md" style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--brand-blue)' }}>Certificate of Completion</h2>
 
-              <p className="text-body-large text-secondary mb-sm" style={{ fontStyle: 'italic' }}>This is to proudly certify that</p>
+              <p className="text-body-large text-secondary mb-xs" style={{ fontStyle: 'italic' }}>This is to proudly certify that</p>
               
-              <h1 className="mb-lg font-serif" style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: '3.5rem', color: '#111827', borderBottom: '2px solid var(--brand-blue)', display: 'inline-block', padding: '0 2rem', paddingBottom: '0.5rem' }}>
+              <h1 className="mb-md font-serif" style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: '3rem', color: '#111827', borderBottom: '2px solid var(--brand-blue)', display: 'inline-block', padding: '0 2rem', paddingBottom: '0.5rem' }}>
                 {displayName}
               </h1>
 
-              <p className="text-body-large text-secondary mb-sm mt-md" style={{ fontStyle: 'italic' }}>has successfully completed the comprehensive course</p>
+              <p className="text-body-large text-secondary mb-xs mt-sm" style={{ fontStyle: 'italic' }}>has successfully completed the comprehensive course</p>
               
-              <h2 className="mb-2xl font-serif" style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: '2.5rem', color: 'var(--brand-blue)' }}>
+              <h2 className="mb-lg font-serif" style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: '2.25rem', color: 'var(--brand-blue)' }}>
                 {courseTitle}
               </h2>
             </div>
 
             {/* Bottom Signatures Section */}
-            <div className="grid grid-cols-3 gap-xl mt-auto text-center relative z-10 items-end px-xl">
+            <div className="grid grid-cols-3 gap-xl mt-auto text-center relative z-10 items-end px-xl pb-sm">
               <div>
-                <div style={{ fontFamily: "'Brush Script MT', 'Dancing Script', cursive", fontSize: '2rem', color: '#1f2937', marginBottom: '0.5rem', borderBottom: '1px solid #d1d5db', paddingBottom: '0.5rem' }}>
+                <div style={{ fontFamily: "'Brush Script MT', 'Dancing Script', cursive", fontSize: '2rem', color: '#1f2937', marginBottom: '0.25rem', borderBottom: '1px solid #d1d5db', paddingBottom: '0.25rem' }}>
                   {instructorName}
                 </div>
                 <p className="text-small font-semibold text-secondary uppercase tracking-wider">Instructor Signature</p>
               </div>
 
               <div className="flex flex-col items-center justify-end">
-                <div style={{ backgroundColor: 'var(--brand-blue)', color: 'white', padding: '1rem', borderRadius: '50%', display: 'inline-flex', boxShadow: '0 4px 14px rgba(0,0,0,0.2)', marginBottom: '1rem' }}>
-                  <Award size={48} />
+                <div style={{ backgroundColor: 'var(--brand-blue)', color: 'white', padding: '1rem', borderRadius: '50%', display: 'inline-flex', boxShadow: '0 4px 14px rgba(0,0,0,0.2)', marginBottom: '0.5rem' }}>
+                  <Award size={40} />
                 </div>
                 <p className="text-xs text-tertiary">Verify at: imraedu.com/verify/{id || 'cert'}</p>
               </div>
 
               <div>
-                <div style={{ fontSize: '1.25rem', color: '#1f2937', marginBottom: '0.5rem', borderBottom: '1px solid #d1d5db', paddingBottom: '1.25rem' }}>
+                <div style={{ fontSize: '1.25rem', color: '#1f2937', marginBottom: '0.25rem', borderBottom: '1px solid #d1d5db', paddingBottom: '1rem' }}>
                   {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                 </div>
                 <p className="text-small font-semibold text-secondary uppercase tracking-wider">Date Issued</p>
