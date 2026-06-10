@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../api';
 import { useAuth } from '../context/AuthContext';
+import { useTranslation } from 'react-i18next';
 import { Eye, EyeOff, User, Lock } from 'lucide-react';
 
 // ── Social icons ────────────────────────────────────────────────────
@@ -29,6 +30,7 @@ const inputStyle: React.CSSProperties = {
 };
 
 const Login = () => {
+  const { t } = useTranslation();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -143,10 +145,10 @@ const Login = () => {
       <div style={{ backgroundColor: 'var(--bg-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '3rem 2.5rem' }}>
         <div className="animate-fade-in" style={{ width: '100%', maxWidth: '420px' }}>
 
-          <h2 style={{ fontSize: '1.875rem', fontWeight: 800, marginBottom: '0.4rem', letterSpacing: '-0.02em' }}>Log in</h2>
+          <h2 style={{ fontSize: '1.875rem', fontWeight: 800, marginBottom: '0.4rem', letterSpacing: '-0.02em' }}>{t('auth.login_btn')}</h2>
           <p style={{ color: 'var(--text-secondary)', marginBottom: '1.75rem', fontSize: '0.95rem' }}>
-            Don't have an account?{' '}
-            <Link to="/signup" style={{ color: 'var(--brand-blue)', fontWeight: 600 }}>Sign up for free</Link>
+            {t('auth.no_account')} {' '}
+            <Link to="/signup" style={{ color: 'var(--brand-blue)', fontWeight: 600 }}>{t('auth.signup')}</Link>
           </p>
 
           {/* Google Sign-In — full-width */}
@@ -213,8 +215,8 @@ const Login = () => {
             {/* Password */}
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                <label style={{ fontSize: '0.875rem', fontWeight: 600 }}>Password</label>
-                <Link to="/forgot-password" style={{ fontSize: '0.82rem', color: 'var(--brand-blue)', fontWeight: 600 }}>Forgot password?</Link>
+                <label style={{ fontSize: '0.875rem', fontWeight: 600 }}>{t('auth.password')}</label>
+                <Link to="/forgot-password" style={{ fontSize: '0.82rem', color: 'var(--brand-blue)', fontWeight: 600 }}>{t('auth.forgot_password')}</Link>
               </div>
               <div style={{ position: 'relative' }}>
                 <Lock size={16} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-tertiary)', pointerEvents: 'none' }} />
@@ -246,11 +248,10 @@ const Login = () => {
               }}
             >
               {loading ? (
-                <>
-                  <div style={{ width: '18px', height: '18px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: 'white', borderRadius: '50%', animation: 'spin 0.7s linear infinite' }} />
-                  Logging in…
-                </>
-              ) : 'Log In'}
+                <><div className="spinner" style={{ width: '18px', height: '18px', border: '2px solid var(--text-tertiary)', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }} /> Logging in...</>
+              ) : (
+                t('auth.login_btn')
+              )}
             </button>
           </form>
 

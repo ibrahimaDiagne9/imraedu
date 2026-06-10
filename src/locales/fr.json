@@ -29,5 +29,54 @@
     "category_all": "Toutes les catégories",
     "no_courses": "Aucun cours trouvé pour votre recherche.",
     "try_different_search": "Essayez de modifier votre recherche ou vos filtres pour trouver ce que vous cherchez."
+  },
+  "auth": {
+    "welcome_back": "Ravi de vous revoir !",
+    "login_subtitle": "Connectez-vous pour poursuivre votre apprentissage.",
+    "email": "Adresse Email",
+    "password": "Mot de passe",
+    "login_btn": "Se connecter",
+    "no_account": "Vous n'avez pas de compte ?",
+    "signup": "S'inscrire",
+    "forgot_password": "Mot de passe oublié ?",
+    "create_account": "Créer un compte",
+    "signup_subtitle": "Rejoignez des milliers d'apprenants maîtrisant de nouvelles compétences chaque jour.",
+    "first_name": "Prénom",
+    "last_name": "Nom",
+    "signup_btn": "S'inscrire",
+    "already_have_account": "Vous avez déjà un compte ?"
+  },
+  "home": {
+    "welcome_back": "Ravi de vous revoir",
+    "continue_learning": "Prêt à poursuivre votre apprentissage ? Reprenez là où vous vous êtes arrêté ou explorez de nouveaux cours aujourd'hui.",
+    "go_to_dashboard": "Aller au Tableau de Bord",
+    "popular_categories": "Catégories Populaires",
+    "popular_subtitle": "Explorez les cours les mieux notés dans nos sujets les plus populaires.",
+    "top_courses": "Cours les Mieux Notés",
+    "top_courses_subtitle": "Rejoignez des milliers d'apprenants dans nos programmes les mieux notés."
+  },
+  "dashboard": {
+    "title": "Mon Tableau de Bord",
+    "subtitle": "Suivez vos progrès et continuez à apprendre.",
+    "in_progress": "En cours",
+    "completed": "Terminé",
+    "resume_learning": "Reprendre",
+    "start_learning": "Commencer",
+    "view_certificate": "Voir le Certificat",
+    "no_enrollments": "Vous n'êtes inscrit à aucun cours pour le moment.",
+    "explore_courses": "Explorer les Cours"
+  },
+  "course": {
+    "overview": "Aperçu",
+    "curriculum": "Programme",
+    "reviews": "Avis",
+    "enroll_now": "S'inscrire",
+    "go_to_course": "Aller au Cours",
+    "about": "À propos de ce cours",
+    "instructor": "Formateur",
+    "level": "Niveau",
+    "duration": "Durée",
+    "lessons": "leçons",
+    "free": "Gratuit"
   }
 }

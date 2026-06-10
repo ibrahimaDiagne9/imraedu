@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../api';
 import { useAuth } from '../context/AuthContext';
+import { useTranslation } from 'react-i18next';
 import { Eye, EyeOff, User, Mail, Lock, CheckCircle2 } from 'lucide-react';
 
 // ── Social icons ─────────────────────────────────────────────────────
@@ -34,6 +35,7 @@ const inputStyle: React.CSSProperties = {
 };
 
 const Signup = () => {
+  const { t } = useTranslation();
   const [form, setForm] = useState({ firstName: '', username: '', email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
@@ -163,10 +165,10 @@ const Signup = () => {
             </div>
           ) : (
             <>
-          <h2 style={{ fontSize: '1.875rem', fontWeight: 800, marginBottom: '0.4rem', letterSpacing: '-0.02em' }}>Create your account</h2>
+          <h2 style={{ fontSize: '1.875rem', fontWeight: 800, marginBottom: '0.4rem', letterSpacing: '-0.02em' }}>{t('auth.create_account')}</h2>
           <p style={{ color: 'var(--text-secondary)', marginBottom: '1.75rem', fontSize: '0.95rem' }}>
-            Already have an account?{' '}
-            <Link to="/login" style={{ color: 'var(--brand-blue)', fontWeight: 600 }}>Log in</Link>
+            {t('auth.already_have_account')}{' '}
+            <Link to="/login" style={{ color: 'var(--brand-blue)', fontWeight: 600 }}>{t('auth.login_btn')}</Link>
           </p>
 
           {/* Google Sign-In — full-width */}
@@ -220,7 +222,7 @@ const Signup = () => {
             {/* Name + Username row */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.5rem' }}>First Name</label>
+                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.5rem' }}>{t('auth.first_name')}</label>
                 <div style={{ position: 'relative' }}>
                   <User size={15} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-tertiary)', pointerEvents: 'none' }} />
                   <input type="text" placeholder="John" value={form.firstName} required onChange={set('firstName')} style={inputStyle} onFocus={focusInput} onBlur={blurInput} />
@@ -237,7 +239,7 @@ const Signup = () => {
 
             {/* Email */}
             <div>
-              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.5rem' }}>Email</label>
+              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.5rem' }}>{t('auth.email')}</label>
               <div style={{ position: 'relative' }}>
                 <Mail size={15} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-tertiary)', pointerEvents: 'none' }} />
                 <input type="email" placeholder="name@example.com" value={form.email} required onChange={set('email')} style={inputStyle} onFocus={focusInput} onBlur={blurInput} />
@@ -246,7 +248,7 @@ const Signup = () => {
 
             {/* Password */}
             <div>
-              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.5rem' }}>Password</label>
+              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.5rem' }}>{t('auth.password')}</label>
               <div style={{ position: 'relative' }}>
                 <Lock size={15} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-tertiary)', pointerEvents: 'none' }} />
                 <input

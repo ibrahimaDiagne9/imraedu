@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { Star, Clock, Globe, Award, PlayCircle, BarChart, Users } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useTranslation } from 'react-i18next';
 import SEO from '../components/SEO';
 import api from '../api';
 
@@ -14,6 +15,7 @@ const fetchCourse = async (id: string) => {
 const CourseDetails = () => {
   const { id } = useParams();
   const { user } = useAuth();
+  const { t } = useTranslation();
 
   const { data: course, isLoading, isError } = useQuery({
     queryKey: ['course', id],
@@ -115,7 +117,7 @@ const CourseDetails = () => {
                     className="btn btn-primary"
                     style={{ width: '100%', padding: '1rem', fontSize: '1.125rem', marginBottom: '0.5rem' }}
                   >
-                    {enrollMutation.isPending ? 'Enrolling...' : enrollMutation.isSuccess ? '✓ Enrolled!' : 'Enroll for Free'}
+                    {enrollMutation.isPending ? 'Enrolling...' : enrollMutation.isSuccess ? '✓ Enrolled!' : t('course.enroll_now')}
                   </button>
                   <Link to={`/learn/${id}`} className="btn btn-secondary" style={{ width: '100%', padding: '0.75rem', textAlign: 'center', display: 'block', marginBottom: '1rem' }}>
                     Go to Course Player
@@ -137,15 +139,15 @@ const CourseDetails = () => {
         <div className="flex-col gap-2xl">
           {course.description && (
             <section>
-              <h2 className="text-h2 mb-lg">About this course</h2>
+              <h2 className="text-h2 mb-lg">{t('course.about')}</h2>
               <p className="text-body text-secondary">{course.description}</p>
             </section>
           )}
 
           {/* Real Syllabus */}
           <section>
-            <h2 className="text-h2 mb-lg">Syllabus</h2>
-            <p className="text-secondary mb-md">{moduleCount} modules • {lessonCount} lessons</p>
+            <h2 className="text-h2 mb-lg">{t('course.curriculum')}</h2>
+            <p className="text-secondary mb-md">{moduleCount} modules • {lessonCount} {t('course.lessons')}</p>
             {moduleCount > 0 ? (
               <div className="flex-col gap-md">
                 {course.modules.map((mod: any, i: number) => (

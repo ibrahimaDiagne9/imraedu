@@ -5,6 +5,7 @@ import CourseCard from '../components/CourseCard';
 import { CourseSkeleton } from '../components/Skeletons';
 import SEO from '../components/SEO';
 import { useAuth } from '../context/AuthContext';
+import { useTranslation } from 'react-i18next';
 import api from '../api';
 
 const fetchCourses = async () => {
@@ -14,6 +15,7 @@ const fetchCourses = async () => {
 
 const Home = () => {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const { data: courses = [], isLoading } = useQuery({
     queryKey: ['courses'],
     queryFn: fetchCourses,
@@ -28,8 +30,8 @@ const Home = () => {
 
       <section className="py-3xl container">
         <div className="flex justify-between items-center mb-xl">
-          <h2 className="text-h2">Launch your new career</h2>
-          <Link to="/catalog" className="btn btn-ghost text-brand font-semibold">Show all</Link>
+          <h2 className="text-h2">{t('home.top_courses')}</h2>
+          <Link to="/catalog" className="btn btn-ghost text-brand font-semibold">{t('nav.explore')}</Link>
         </div>
         {isLoading ? (
           <div className="grid grid-cols-4 gap-xl">

@@ -29,5 +29,54 @@
     "category_all": "All Categories",
     "no_courses": "No courses found matching your search.",
     "try_different_search": "Try adjusting your search or filters to find what you're looking for."
+  },
+  "auth": {
+    "welcome_back": "Welcome Back!",
+    "login_subtitle": "Log in to continue your learning journey.",
+    "email": "Email Address",
+    "password": "Password",
+    "login_btn": "Log In",
+    "no_account": "Don't have an account?",
+    "signup": "Sign up",
+    "forgot_password": "Forgot Password?",
+    "create_account": "Create an Account",
+    "signup_subtitle": "Join thousands of learners mastering new skills every day.",
+    "first_name": "First Name",
+    "last_name": "Last Name",
+    "signup_btn": "Sign Up",
+    "already_have_account": "Already have an account?"
+  },
+  "home": {
+    "welcome_back": "Welcome back",
+    "continue_learning": "Ready to continue your learning journey? Pick up right where you left off or explore new courses today.",
+    "go_to_dashboard": "Go to Dashboard",
+    "popular_categories": "Popular Categories",
+    "popular_subtitle": "Explore top-rated courses across our most popular subjects.",
+    "top_courses": "Top Rated Courses",
+    "top_courses_subtitle": "Join thousands of learners in our highest rated programs."
+  },
+  "dashboard": {
+    "title": "My Dashboard",
+    "subtitle": "Track your progress and continue learning.",
+    "in_progress": "In Progress",
+    "completed": "Completed",
+    "resume_learning": "Resume Learning",
+    "start_learning": "Start Learning",
+    "view_certificate": "View Certificate",
+    "no_enrollments": "You haven't enrolled in any courses yet.",
+    "explore_courses": "Explore Courses"
+  },
+  "course": {
+    "overview": "Overview",
+    "curriculum": "Curriculum",
+    "reviews": "Reviews",
+    "enroll_now": "Enroll Now",
+    "go_to_course": "Go to Course",
+    "about": "About this course",
+    "instructor": "Instructor",
+    "level": "Level",
+    "duration": "Duration",
+    "lessons": "lessons",
+    "free": "Free"
   }
 }

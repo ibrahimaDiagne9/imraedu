@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { PlayCircle, Award, Clock, Compass } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useTranslation } from 'react-i18next';
 import { EnrollmentSkeleton } from '../components/Skeletons';
 import api from '../api';
 
@@ -13,6 +14,7 @@ const fetchEnrollments = async () => {
 
 const Dashboard = () => {
   const { user } = useAuth();
+  const { t } = useTranslation();
 
   const { data: enrollments = [], isLoading } = useQuery({
     queryKey: ['enrollments'],
@@ -27,7 +29,7 @@ const Dashboard = () => {
 
   return (
     <div className="container py-3xl min-h-screen">
-      <h1 className="text-h1 mb-xl">My Learning</h1>
+      <h1 className="text-h1 mb-xl">{t('dashboard.title')}</h1>
 
       {/* Tabs */}
       <div className="flex gap-lg border-b mb-xl" style={{ borderBottom: '1px solid var(--border-light)' }}>
@@ -35,12 +37,12 @@ const Dashboard = () => {
           className="pb-sm font-medium"
           style={{ borderBottom: activeTab === 'inProgress' ? '2px solid var(--brand-blue)' : '2px solid transparent', color: activeTab === 'inProgress' ? 'var(--brand-blue)' : 'var(--text-secondary)' }}
           onClick={() => setActiveTab('inProgress')}
-        >In Progress ({inProgress.length})</button>
+        >{t('dashboard.in_progress')} ({inProgress.length})</button>
         <button
           className="pb-sm font-medium"
           style={{ borderBottom: activeTab === 'completed' ? '2px solid var(--brand-blue)' : '2px solid transparent', color: activeTab === 'completed' ? 'var(--brand-blue)' : 'var(--text-secondary)' }}
           onClick={() => setActiveTab('completed')}
-        >Completed ({completed.length})</button>
+        >{t('dashboard.completed')} ({completed.length})</button>
       </div>
 
       <div className="dashboard-layout">
@@ -68,11 +70,11 @@ const Dashboard = () => {
                 <Compass size={40} color="white" />
               </div>
               <h3 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '0.75rem', letterSpacing: '-0.02em' }}>
-                {activeTab === 'inProgress' ? 'Your journey starts here' : 'No completed courses yet'}
+                {activeTab === 'inProgress' ? t('dashboard.no_enrollments') : 'No completed courses yet'}
               </h3>
               <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem', fontSize: '1rem', maxWidth: '400px', margin: '0 auto 2rem' }}>
                 {activeTab === 'inProgress' 
-                  ? 'Ready to learn something new? Explore our catalog of world-class courses and start growing today.' 
+                  ? t('dashboard.explore_courses') 
                   : 'Keep learning to earn your first completion certificate!'}
               </p>
               {activeTab === 'inProgress' && (
@@ -82,7 +84,7 @@ const Dashboard = () => {
                   color: 'white', borderRadius: '12px', fontWeight: 700,
                   boxShadow: '0 4px 15px rgba(0,86,210,0.3)', textDecoration: 'none'
                 }}>
-                  Explore Catalog
+                  {t('dashboard.explore_courses')}
                 </Link>
               )}
             </div>
@@ -120,7 +122,7 @@ const Dashboard = () => {
                       <span className="text-small text-tertiary flex items-center gap-xs">
                         <Clock size={14} /> Enrolled {new Date(enrollment.enrolled_at).toLocaleDateString()}
                       </span>
-                      <Link to={`/learn/${enrollment.course.id}`} className="btn btn-primary" style={{ padding: '0.5rem 1.5rem' }}>Resume</Link>
+                      <Link to={`/learn/${enrollment.course.id}`} className="btn btn-primary" style={{ padding: '0.5rem 1.5rem' }}>{t('dashboard.resume_learning')}</Link>
                     </div>
                   </div>
                 </div>
