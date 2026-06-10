@@ -188,3 +188,31 @@ class LessonCompletion(models.Model):
             pass
 
 
+class DiscussionThread(models.Model):
+    lesson = models.ForeignKey(Lesson, related_name='discussion_threads', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name='discussion_threads', on_delete=models.CASCADE)
+    title = models.CharField(max_length=255)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    resolved = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.user.username} on {self.lesson.title}: {self.title[:50]}"
+
+
+class DiscussionReply(models.Model):
+    thread = models.ForeignKey(DiscussionThread, related_name='replies', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name='discussion_replies', on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['created_at']
+
+    def __str__(self):
+        return f"Reply by {self.user.username} to {self.thread.title[:30]}"

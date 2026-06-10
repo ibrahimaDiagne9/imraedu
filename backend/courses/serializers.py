@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.core.mail import send_mail
 from django.conf import settings
-from .models import User, Course, Module, Lesson, Question, Choice, Enrollment, InstructorApplication, Review
+from .models import User, Course, Module, Lesson, Question, Choice, Enrollment, InstructorApplication, Review, DiscussionThread, DiscussionReply
 
 class InstructorApplicationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -172,3 +172,37 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
             raise serializers.ValidationError({"token": "Invalid or expired token"})
             
         return attrs
+
+
+class DiscussionReplySerializer(serializers.ModelSerializer):
+    user_name = serializers.SerializerMethodField()
+    is_instructor = serializers.SerializerMethodField()
+
+    class Meta:
+        model = DiscussionReply
+        fields = ['id', 'user', 'user_name', 'is_instructor', 'content', 'created_at']
+        read_only_fields = ['user']
+
+    def get_user_name(self, obj):
+        return obj.user.first_name or obj.user.username
+
+    def get_is_instructor(self, obj):
+        # Optional: highlight replies from the course instructor
+        return obj.user == obj.thread.lesson.module.course.instructor
+
+
+class DiscussionThreadSerializer(serializers.ModelSerializer):
+    user_name = serializers.SerializerMethodField()
+    replies = DiscussionReplySerializer(many=True, read_only=True)
+    reply_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = DiscussionThread
+        fields = ['id', 'user', 'user_name', 'title', 'content', 'created_at', 'resolved', 'replies', 'reply_count']
+        read_only_fields = ['user', 'resolved']
+
+    def get_user_name(self, obj):
+        return obj.user.first_name or obj.user.username
+
+    def get_reply_count(self, obj):
+        return obj.replies.count()

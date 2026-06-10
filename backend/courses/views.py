@@ -714,3 +714,60 @@ class CompleteLessonView(APIView):
         
         enrollment = Enrollment.objects.get(user=request.user, course_id=course_id)
         return Response({"progress_percentage": enrollment.progress_percentage}, status=status.HTTP_200_OK)
+
+
+class LessonDiscussionView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, lesson_id):
+        # Allow any authenticated user to view discussions (or restrict to enrolled students)
+        from .models import DiscussionThread
+        from .serializers import DiscussionThreadSerializer
+        
+        threads = DiscussionThread.objects.filter(lesson_id=lesson_id)
+        serializer = DiscussionThreadSerializer(threads, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, lesson_id):
+        from .models import DiscussionThread, Lesson, Enrollment
+        from .serializers import DiscussionThreadSerializer
+        
+        # Verify enrollment
+        try:
+            lesson = Lesson.objects.get(id=lesson_id)
+            if not Enrollment.objects.filter(user=request.user, course=lesson.module.course).exists():
+                return Response({"detail": "Must be enrolled to ask a question."}, status=status.HTTP_403_FORBIDDEN)
+        except Lesson.DoesNotExist:
+            return Response({"detail": "Lesson not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = DiscussionThreadSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user, lesson=lesson)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class DiscussionReplyView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, thread_id):
+        from .models import DiscussionThread, DiscussionReply, Enrollment
+        from .serializers import DiscussionReplySerializer
+        
+        try:
+            thread = DiscussionThread.objects.get(id=thread_id)
+            course = thread.lesson.module.course
+            # Instructors of the course OR enrolled students can reply
+            is_instructor = request.user == course.instructor
+            is_enrolled = Enrollment.objects.filter(user=request.user, course=course).exists()
+            
+            if not is_instructor and not is_enrolled:
+                return Response({"detail": "Must be enrolled or the instructor to reply."}, status=status.HTTP_403_FORBIDDEN)
+        except DiscussionThread.DoesNotExist:
+            return Response({"detail": "Thread not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = DiscussionReplySerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user, thread=thread)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

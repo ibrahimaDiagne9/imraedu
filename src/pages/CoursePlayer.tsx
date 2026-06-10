@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { ChevronLeft, PlayCircle, FileText, HelpCircle, CheckCircle2, XCircle, Check, Star } from 'lucide-react';
 import api from '../api';
+import LessonDiscussions from '../components/LessonDiscussions';
 
 const fetchEnrollments = async () => {
   const { data } = await api.get('/enrollments/');
@@ -349,6 +350,13 @@ const CoursePlayer = () => {
                 Overview
               </button>
               <button 
+                className={`pb-sm font-medium ${activeTab === 'discussions' ? 'text-brand' : 'text-secondary'}`}
+                style={{ borderBottom: activeTab === 'discussions' ? '2px solid var(--brand-blue)' : '2px solid transparent', display: 'flex', alignItems: 'center', gap: '0.25rem' }}
+                onClick={() => setActiveTab('discussions')}
+              >
+                <HelpCircle size={16} /> Discussions
+              </button>
+              <button 
                 className={`pb-sm font-medium ${activeTab === 'notes' ? 'text-brand' : 'text-secondary'}`}
                 style={{ borderBottom: activeTab === 'notes' ? '2px solid var(--brand-blue)' : '2px solid transparent' }}
                 onClick={() => setActiveTab('notes')}
@@ -366,11 +374,19 @@ const CoursePlayer = () => {
                   </p>
                 </div>
               )}
-              {activeTab === 'notes' && (
-                <p className="text-secondary">Take notes here while you watch the video...</p>
+              {activeTab === 'discussions' && (
+                <div>
+                  <LessonDiscussions lessonId={activeLesson.id} />
+                </div>
               )}
+              {activeTab === 'notes' && (
+                <div>
+                  <p className="text-secondary">Take notes here while you watch the video...</p>
+                </div>
+              )}
+            </div>
               
-              <div className="mt-2xl flex justify-between items-center border-t pt-xl" style={{ borderTop: '1px solid var(--border-light)' }}>
+            <div className="mt-2xl flex justify-between items-center border-t pt-xl" style={{ borderTop: '1px solid var(--border-light)' }}>
                 <div></div>
                 {completedLessons.includes(activeLesson.id) ? (
                   <button className="btn btn-secondary flex items-center gap-sm" disabled>
@@ -426,8 +442,7 @@ const CoursePlayer = () => {
                 </div>
               )}
             </div>
-          </div>
-        )}
+          )}
       </div>
     </div>
   );
