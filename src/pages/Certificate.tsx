@@ -84,8 +84,9 @@ const Certificate = () => {
           <div style={{ position: 'absolute', top: 0, left: 0, width: '100px', height: '100px', borderRight: '10px solid var(--brand-blue-light)', borderBottom: '10px solid var(--brand-blue-light)' }}></div>
           <div style={{ position: 'absolute', bottom: 0, right: 0, width: '100px', height: '100px', borderLeft: '10px solid var(--brand-blue-light)', borderTop: '10px solid var(--brand-blue-light)' }}></div>
 
-          <div className="flex justify-center mb-xl">
-            <Award size={64} className="text-brand" />
+          <div className="flex flex-col items-center justify-center mb-xl gap-md">
+            <img src="/image/IMRAEDU.png" width="180" height="auto" alt="ImraEdu Logo" />
+            <Award size={48} className="text-brand" />
           </div>
 
           <h2 className="text-h3 text-tertiary tracking-widest uppercase mb-lg">Certificate of Completion</h2>
