@@ -582,7 +582,7 @@ const CourseEditor = () => {
                 <div>
                   <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.35rem' }}>Thumbnail</label>
                   {cf.thumbnail_url && (
-                    <div style={{ marginBottom: '0.5rem', width: '100%', height: '150px', backgroundImage: `url(${cf.thumbnail_url})`, backgroundSize: 'cover', backgroundPosition: 'center', borderRadius: 'var(--radius-md)' }} />
+                    <div style={{ marginBottom: '0.5rem', width: '100%', height: '150px', backgroundImage: `url('${cf.thumbnail_url}')`, backgroundSize: 'cover', backgroundPosition: 'center', borderRadius: 'var(--radius-md)' }} />
                   )}
                   <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                     <input style={{ ...inputStyle, flex: 1 }} type="url" placeholder="https://..." value={cf.thumbnail_url || ''}

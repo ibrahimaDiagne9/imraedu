@@ -93,7 +93,7 @@ const Dashboard = () => {
                   <div className="thumbnail" style={{
                     width: '150px', height: '150px',
                     backgroundColor: enrollment.course.image_color || '#EBF3FF',
-                    backgroundImage: enrollment.course.thumbnail_url ? `url(${enrollment.course.thumbnail_url})` : undefined,
+                    backgroundImage: enrollment.course.thumbnail_url ? `url('${enrollment.course.thumbnail_url}')` : undefined,
                     backgroundSize: 'cover', backgroundPosition: 'center',
                     borderRadius: 'var(--radius-lg)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0

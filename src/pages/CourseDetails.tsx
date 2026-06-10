@@ -99,7 +99,7 @@ const CourseDetails = () => {
               <div style={{
                 width: '100%', height: '200px',
                 backgroundColor: course.image_color || 'var(--bg-tertiary)',
-                backgroundImage: course.thumbnail_url ? `url(${course.thumbnail_url})` : undefined,
+                backgroundImage: course.thumbnail_url ? `url('${course.thumbnail_url}')` : undefined,
                 backgroundSize: 'cover', backgroundPosition: 'center',
                 borderRadius: 'var(--radius-md)', marginBottom: '1.5rem',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer'

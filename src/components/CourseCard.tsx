@@ -19,7 +19,7 @@ const CourseCard = ({ id, title, provider, rating, reviews, level, duration, ima
 
   return (
     <Link to={`/course/${id}`} className="hover-scale" style={{ display: 'block', backgroundColor: 'var(--bg-primary)', borderRadius: 'var(--radius-lg)', overflow: 'hidden', border: '1px solid var(--border-light)' }}>
-      <div style={{ height: '160px', backgroundColor: bgColor, position: 'relative', backgroundImage: thumbnail_url ? `url(${thumbnail_url})` : undefined, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+      <div style={{ height: '160px', backgroundColor: bgColor, position: 'relative', backgroundImage: thumbnail_url ? `url('${thumbnail_url}')` : undefined, backgroundSize: 'cover', backgroundPosition: 'center' }}>
         <div style={{ position: 'absolute', bottom: '10px', left: '10px', background: 'rgba(0,0,0,0.7)', color: 'white', padding: '2px 8px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600 }}>
           Free
         </div>
