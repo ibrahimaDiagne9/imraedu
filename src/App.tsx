@@ -15,6 +15,7 @@ import Accomplishments from './pages/Accomplishments';
 import Help from './pages/Help';
 import Certificate from './pages/Certificate';
 import InstructorDashboard from './pages/InstructorDashboard';
+import InstructorAnalytics from './pages/InstructorAnalytics';
 import CourseEditor from './pages/CourseEditor';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
@@ -54,6 +55,7 @@ function App() {
             <Route path="/learn/:id" element={<ProtectedRoute><CoursePlayer /></ProtectedRoute>} />
             <Route path="/certificate/:id" element={<ProtectedRoute><Certificate /></ProtectedRoute>} />
             <Route path="/instructor" element={<ProtectedRoute requireInstructor><InstructorDashboard /></ProtectedRoute>} />
+            <Route path="/instructor/analytics" element={<ProtectedRoute requireInstructor><InstructorAnalytics /></ProtectedRoute>} />
             <Route path="/instructor/course/:id/edit" element={<ProtectedRoute requireInstructor><CourseEditor /></ProtectedRoute>} />
           </Routes>
         </main>

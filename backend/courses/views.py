@@ -206,6 +206,76 @@ class InstructorCourseViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(instructor=self.request.user)
 
+    @action(detail=False, methods=['get'])
+    def analytics(self, request):
+        courses = self.get_queryset()
+        
+        # Top-level metrics
+        total_enrollments = 0
+        total_completions = 0
+        total_rating_sum = 0
+        total_rated_courses = 0
+        
+        course_data = []
+        
+        for c in courses:
+            enrollments = Enrollment.objects.filter(course=c)
+            enrollment_count = enrollments.count()
+            completions = enrollments.filter(completed=True).count()
+            
+            total_enrollments += enrollment_count
+            total_completions += completions
+            
+            if c.rating > 0:
+                total_rating_sum += c.rating
+                total_rated_courses += 1
+                
+            avg_progress = 0
+            if enrollment_count > 0:
+                avg_progress = sum(e.progress_percentage for e in enrollments) / enrollment_count
+                
+            course_data.append({
+                'id': c.id,
+                'title': c.title,
+                'enrollments': enrollment_count,
+                'completions': completions,
+                'avg_progress': round(avg_progress, 1),
+                'rating': c.rating
+            })
+            
+        avg_rating = round(total_rating_sum / total_rated_courses, 1) if total_rated_courses > 0 else 0
+        
+        # Monthly trends (last 6 months)
+        from django.utils import timezone
+        from datetime import timedelta
+        import calendar
+        
+        trends = []
+        today = timezone.now()
+        for i in range(5, -1, -1):
+            target_date = today - timedelta(days=i*30)
+            month_name = calendar.month_name[target_date.month][:3]
+            
+            # Count enrollments for this month
+            month_enrollments = Enrollment.objects.filter(
+                course__instructor=request.user,
+                enrolled_at__year=target_date.year,
+                enrolled_at__month=target_date.month
+            ).count()
+            
+            trends.append({
+                'month': month_name,
+                'enrollments': month_enrollments
+            })
+
+        return Response({
+            'total_enrollments': total_enrollments,
+            'total_completions': total_completions,
+            'avg_rating': avg_rating,
+            'trends': trends,
+            'course_performance': course_data
+        })
+
 
 class InstructorModuleViewSet(viewsets.ModelViewSet):
     """

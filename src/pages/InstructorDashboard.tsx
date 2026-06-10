@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   BookOpen, Plus, Users, Star, Eye, EyeOff,
-  Edit3, Trash2, GraduationCap
+  Edit3, Trash2, GraduationCap, TrendingUp
 } from 'lucide-react';
 import api from '../api';
 import { useAuth } from '../context/AuthContext';
@@ -78,19 +78,32 @@ const InstructorDashboard = () => {
                 Manage your courses and track your learners' progress.
               </p>
             </div>
-            <button
-              onClick={() => setShowCreateModal(true)}
-              className="btn"
-              style={{
-                backgroundColor: 'white', color: 'var(--brand-blue)',
-                fontWeight: 700, padding: '0.85rem 1.75rem',
-                borderRadius: 'var(--radius-full)',
-                display: 'flex', alignItems: 'center', gap: '0.5rem',
-                boxShadow: '0 4px 20px rgba(0,0,0,0.2)'
-              }}
-            >
-              <Plus size={20} /> New Course
-            </button>
+            <div className="flex gap-sm">
+              <Link
+                to="/instructor/analytics"
+                className="btn btn-secondary"
+                style={{
+                  backgroundColor: 'rgba(255,255,255,0.15)', color: 'white', border: '1px solid rgba(255,255,255,0.3)',
+                  fontWeight: 600, padding: '0.85rem 1.25rem', borderRadius: 'var(--radius-full)',
+                  display: 'flex', alignItems: 'center', gap: '0.5rem'
+                }}
+              >
+                <TrendingUp size={20} /> Analytics
+              </Link>
+              <button
+                onClick={() => setShowCreateModal(true)}
+                className="btn"
+                style={{
+                  backgroundColor: 'white', color: 'var(--brand-blue)',
+                  fontWeight: 700, padding: '0.85rem 1.75rem',
+                  borderRadius: 'var(--radius-full)',
+                  display: 'flex', alignItems: 'center', gap: '0.5rem',
+                  boxShadow: '0 4px 20px rgba(0,0,0,0.2)'
+                }}
+              >
+                <Plus size={20} /> New Course
+              </button>
+            </div>
           </div>
 
           {/* Stats Row */}
