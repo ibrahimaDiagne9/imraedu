@@ -1,0 +1,33 @@
+{
+  "nav": {
+    "explore": "Explorer",
+    "search_placeholder": "Que voulez-vous apprendre ?",
+    "log_in": "Se connecter",
+    "join_for_free": "Rejoindre gratuitement",
+    "instructor_panel": "Panneau Formateur",
+    "my_courses": "Mes cours",
+    "settings": "Paramètres",
+    "accomplishments": "Accomplissements",
+    "help_center": "Centre d'aide",
+    "log_out": "Déconnexion"
+  },
+  "hero": {
+    "title": "Apprenez sans limites",
+    "subtitle": "Commencez, réorientez ou faites progresser votre carrière avec des milliers de cours gratuits, des certificats professionnels et des diplômes d'universités et d'entreprises de classe mondiale.",
+    "cta_join": "Rejoindre gratuitement",
+    "cta_business": "ImraEdu pour les entreprises",
+    "stats": {
+      "learners": "100K+ Apprenants",
+      "courses": "Cours Gratuits",
+      "certifications": "Certifications"
+    }
+  },
+  "catalog": {
+    "title": "Catalogue de cours",
+    "subtitle": "Explorez notre vaste bibliothèque de cours gratuits et maîtrisez de nouvelles compétences dès aujourd'hui.",
+    "search_placeholder": "Rechercher des cours...",
+    "category_all": "Toutes les catégories",
+    "no_courses": "Aucun cours trouvé pour votre recherche.",
+    "try_different_search": "Essayez de modifier votre recherche ou vos filtres pour trouver ce que vous cherchez."
+  }
+}

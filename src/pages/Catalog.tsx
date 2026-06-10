@@ -6,6 +6,7 @@ import CourseCard from '../components/CourseCard';
 import { CourseSkeleton } from '../components/Skeletons';
 import SEO from '../components/SEO';
 import api from '../api';
+import { useTranslation } from 'react-i18next';
 
 const fetchCourses = async () => {
   const { data } = await api.get('/courses/');
@@ -13,6 +14,7 @@ const fetchCourses = async () => {
 };
 
 const Catalog = () => {
+  const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const initialSearch = searchParams.get('search') || '';
   const [searchQuery, setSearchQuery] = useState(initialSearch);
@@ -55,9 +57,9 @@ const Catalog = () => {
 
   return (
     <div className="container py-3xl">
-      <SEO title="Course Catalog" description="Browse all free online courses available on ImraEdu." />
+      <SEO title={t('catalog.title')} description={t('catalog.subtitle')} />
       <div className="flex justify-between items-center mb-xl">
-        <h1 className="text-h1">Catalog</h1>
+        <h1 className="text-h1">{t('catalog.title')}</h1>
         <div className="text-secondary font-medium">Showing {filteredCourses.length} free courses</div>
       </div>
 
@@ -140,7 +142,7 @@ const Catalog = () => {
               <Search size={18} className="text-tertiary" />
               <input 
                 type="text" 
-                placeholder="Search courses, skills, or providers..." 
+                placeholder={t('catalog.search_placeholder')}
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value);
@@ -183,8 +185,8 @@ const Catalog = () => {
           ) : (
             <div className="flex-col items-center justify-center py-3xl text-center">
               <BookOpen size={48} className="text-tertiary mb-md" />
-              <h3 className="text-h3 mb-sm">No courses found</h3>
-              <p className="text-secondary">Try adjusting your search or filters to find what you're looking for.</p>
+              <h3 className="text-h3 mb-sm">{t('catalog.no_courses')}</h3>
+              <p className="text-secondary">{t('catalog.try_different_search')}</p>
             </div>
           )}
         </div>

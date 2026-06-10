@@ -1,0 +1,33 @@
+{
+  "nav": {
+    "explore": "Explore",
+    "search_placeholder": "What do you want to learn?",
+    "log_in": "Log In",
+    "join_for_free": "Join for Free",
+    "instructor_panel": "Instructor Panel",
+    "my_courses": "My Courses",
+    "settings": "Settings",
+    "accomplishments": "Accomplishments",
+    "help_center": "Help Center",
+    "log_out": "Log Out"
+  },
+  "hero": {
+    "title": "Learn without limits",
+    "subtitle": "Start, switch, or advance your career with thousands of free courses, Professional Certificates, and degrees from world-class universities and companies.",
+    "cta_join": "Join for Free",
+    "cta_business": "ImraEdu for Business",
+    "stats": {
+      "learners": "100K+ Learners",
+      "courses": "Free Courses",
+      "certifications": "Certifications"
+    }
+  },
+  "catalog": {
+    "title": "Course Catalog",
+    "subtitle": "Explore our extensive library of free courses and master new skills today.",
+    "search_placeholder": "Search for courses...",
+    "category_all": "All Categories",
+    "no_courses": "No courses found matching your search.",
+    "try_different_search": "Try adjusting your search or filters to find what you're looking for."
+  }
+}
