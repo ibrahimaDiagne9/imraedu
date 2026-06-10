@@ -72,45 +72,79 @@ const Certificate = () => {
 
         {/* Certificate Rendering */}
         <div ref={certificateRef} style={{
-          border: '10px solid var(--brand-blue-light)',
-          padding: '4rem',
-          backgroundColor: 'white',
-          textAlign: 'center',
+          backgroundColor: '#fff',
+          padding: '20px',
           boxShadow: 'var(--shadow-xl)',
           position: 'relative',
-          overflow: 'hidden'
+          overflow: 'hidden',
+          aspectRatio: '1.414 / 1' // A4 Landscape ratio
         }}>
-          {/* Decorative elements */}
-          <div style={{ position: 'absolute', top: 0, left: 0, width: '100px', height: '100px', borderRight: '10px solid var(--brand-blue-light)', borderBottom: '10px solid var(--brand-blue-light)' }}></div>
-          <div style={{ position: 'absolute', bottom: 0, right: 0, width: '100px', height: '100px', borderLeft: '10px solid var(--brand-blue-light)', borderTop: '10px solid var(--brand-blue-light)' }}></div>
+          {/* Inner Ornate Border */}
+          <div style={{
+            border: '6px solid var(--brand-blue)',
+            outline: '2px solid var(--brand-blue)',
+            outlineOffset: '-16px',
+            padding: '3rem',
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            position: 'relative',
+            background: 'radial-gradient(circle at center, #ffffff 40%, #f8fafc 100%)'
+          }}>
+            {/* Corner Ornaments */}
+            <div style={{ position: 'absolute', top: '24px', left: '24px', width: '40px', height: '40px', borderTop: '4px solid var(--brand-blue)', borderLeft: '4px solid var(--brand-blue)' }}></div>
+            <div style={{ position: 'absolute', top: '24px', right: '24px', width: '40px', height: '40px', borderTop: '4px solid var(--brand-blue)', borderRight: '4px solid var(--brand-blue)' }}></div>
+            <div style={{ position: 'absolute', bottom: '24px', left: '24px', width: '40px', height: '40px', borderBottom: '4px solid var(--brand-blue)', borderLeft: '4px solid var(--brand-blue)' }}></div>
+            <div style={{ position: 'absolute', bottom: '24px', right: '24px', width: '40px', height: '40px', borderBottom: '4px solid var(--brand-blue)', borderRight: '4px solid var(--brand-blue)' }}></div>
 
-          <div className="flex flex-col items-center justify-center mb-xl gap-md">
-            <img src="/image/IMRAEDU.png" width="180" height="auto" alt="ImraEdu Logo" />
-            <Award size={48} className="text-brand" />
-          </div>
-
-          <h2 className="text-h3 text-tertiary tracking-widest uppercase mb-lg">Certificate of Completion</h2>
-
-          <p className="text-body-large text-secondary mb-sm">This is to certify that</p>
-          <h1 className="text-h1 text-brand mb-lg font-serif" style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic' }}>
-            {displayName}
-          </h1>
-
-          <p className="text-body-large text-secondary mb-sm">has successfully completed the course</p>
-          <h2 className="text-h2 mb-2xl">{courseTitle}</h2>
-
-          <div className="grid grid-cols-3 gap-xl mt-3xl text-left" style={{ borderTop: '1px solid var(--border-light)', paddingTop: '2rem' }}>
-            <div>
-              <p className="text-small font-semibold mb-xs">Instructor</p>
-              <p className="font-serif italic text-lg" style={{ fontFamily: 'Georgia, serif', fontSize: '1.25rem' }}>{instructorName}</p>
+            {/* Faint Watermark Logo */}
+            <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', opacity: 0.03, pointerEvents: 'none' }}>
+              <img src="/image/IMRAEDU.png" style={{ width: '600px' }} alt="" />
             </div>
-            <div>
-              <p className="text-small font-semibold mb-xs">Date Completed</p>
-              <p>{new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+
+            <div className="flex flex-col items-center justify-center mb-xl gap-md relative z-10">
+              <img src="/image/IMRAEDU.png" width="220" height="auto" alt="ImraEdu Logo" />
             </div>
-            <div>
-              <p className="text-small font-semibold mb-xs">Verify at</p>
-              <p className="text-small text-brand">imraedu.com/verify/{id || 'cert'}</p>
+
+            <div className="text-center relative z-10">
+              <h2 className="text-tertiary tracking-[0.3em] uppercase mb-lg" style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--brand-blue)' }}>Certificate of Completion</h2>
+
+              <p className="text-body-large text-secondary mb-sm" style={{ fontStyle: 'italic' }}>This is to proudly certify that</p>
+              
+              <h1 className="mb-lg font-serif" style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: '3.5rem', color: '#111827', borderBottom: '2px solid var(--brand-blue)', display: 'inline-block', padding: '0 2rem', paddingBottom: '0.5rem' }}>
+                {displayName}
+              </h1>
+
+              <p className="text-body-large text-secondary mb-sm mt-md" style={{ fontStyle: 'italic' }}>has successfully completed the comprehensive course</p>
+              
+              <h2 className="mb-2xl font-serif" style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: '2.5rem', color: 'var(--brand-blue)' }}>
+                {courseTitle}
+              </h2>
+            </div>
+
+            {/* Bottom Signatures Section */}
+            <div className="grid grid-cols-3 gap-xl mt-auto text-center relative z-10 items-end px-xl">
+              <div>
+                <div style={{ fontFamily: "'Brush Script MT', 'Dancing Script', cursive", fontSize: '2rem', color: '#1f2937', marginBottom: '0.5rem', borderBottom: '1px solid #d1d5db', paddingBottom: '0.5rem' }}>
+                  {instructorName}
+                </div>
+                <p className="text-small font-semibold text-secondary uppercase tracking-wider">Instructor Signature</p>
+              </div>
+
+              <div className="flex flex-col items-center justify-end">
+                <div style={{ backgroundColor: 'var(--brand-blue)', color: 'white', padding: '1rem', borderRadius: '50%', display: 'inline-flex', boxShadow: '0 4px 14px rgba(0,0,0,0.2)', marginBottom: '1rem' }}>
+                  <Award size={48} />
+                </div>
+                <p className="text-xs text-tertiary">Verify at: imraedu.com/verify/{id || 'cert'}</p>
+              </div>
+
+              <div>
+                <div style={{ fontSize: '1.25rem', color: '#1f2937', marginBottom: '0.5rem', borderBottom: '1px solid #d1d5db', paddingBottom: '1.25rem' }}>
+                  {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                </div>
+                <p className="text-small font-semibold text-secondary uppercase tracking-wider">Date Issued</p>
+              </div>
             </div>
           </div>
         </div>
