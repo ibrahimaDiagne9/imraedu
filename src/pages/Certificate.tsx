@@ -1,8 +1,11 @@
+import { useRef, useState } from 'react';
 import { Award, Share2, Download } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '../context/AuthContext';
 import api from '../api';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 const fetchCourse = async (id: string) => {
   const { data } = await api.get(`/courses/${id}/`);
@@ -12,6 +15,8 @@ const fetchCourse = async (id: string) => {
 const Certificate = () => {
   const { id } = useParams();
   const { user } = useAuth();
+  const certificateRef = useRef<HTMLDivElement>(null);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const { data: course, isLoading } = useQuery({
     queryKey: ['course', id],
@@ -26,6 +31,26 @@ const Certificate = () => {
   const courseTitle = course?.title || 'Course';
   const instructorName = course?.instructor_name || 'ImraEdu';
 
+  const handleDownload = async () => {
+    if (!certificateRef.current) return;
+    setIsDownloading(true);
+    try {
+      const canvas = await html2canvas(certificateRef.current, { scale: 2 });
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF({
+        orientation: 'landscape',
+        unit: 'px',
+        format: [canvas.width, canvas.height]
+      });
+      pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+      pdf.save(`${courseTitle.replace(/\s+/g, '_')}_Certificate.pdf`);
+    } catch (err) {
+      console.error('Failed to generate PDF', err);
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
   if (isLoading) return <div className="container py-3xl text-center text-secondary">Loading certificate...</div>;
 
   return (
@@ -34,13 +59,19 @@ const Certificate = () => {
         <div className="flex justify-between items-center mb-xl">
           <h1 className="text-h2">Course Certificate</h1>
           <div className="flex gap-md">
-            <button className="btn btn-secondary flex items-center gap-xs"><Download size={16} /> Download PDF</button>
+            <button 
+              className="btn btn-secondary flex items-center gap-xs"
+              onClick={handleDownload}
+              disabled={isDownloading}
+            >
+              <Download size={16} /> {isDownloading ? 'Generating...' : 'Download PDF'}
+            </button>
             <button className="btn btn-primary flex items-center gap-xs"><Share2 size={16} /> Share</button>
           </div>
         </div>
 
         {/* Certificate Rendering */}
-        <div style={{
+        <div ref={certificateRef} style={{
           border: '10px solid var(--brand-blue-light)',
           padding: '4rem',
           backgroundColor: 'white',
