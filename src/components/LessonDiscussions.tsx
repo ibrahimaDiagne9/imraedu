@@ -53,27 +53,31 @@ export default function LessonDiscussions({ lessonId }: { lessonId: number }) {
         <h3 className="text-h3 mb-md flex items-center gap-sm">
           <MessageSquare size={20} className="text-brand" /> Ask a Question
         </h3>
-        <input 
-          type="text" 
-          placeholder="Question title" 
-          className="input mb-sm"
-          value={newThreadTitle}
-          onChange={(e) => setNewThreadTitle(e.target.value)}
-        />
-        <textarea 
-          placeholder="Describe what you are stuck on..." 
-          className="input mb-md"
-          rows={3}
-          value={newThreadContent}
-          onChange={(e) => setNewThreadContent(e.target.value)}
-        />
-        <button 
-          className="btn btn-primary flex items-center gap-sm"
-          onClick={() => createThread.mutate()}
-          disabled={!newThreadTitle.trim() || !newThreadContent.trim() || createThread.isPending}
-        >
-          <Send size={16} /> Post Question
-        </button>
+        <div className="flex flex-col gap-sm">
+          <input 
+            type="text" 
+            placeholder="Question title" 
+            className="input w-full"
+            value={newThreadTitle}
+            onChange={(e) => setNewThreadTitle(e.target.value)}
+          />
+          <textarea 
+            placeholder="Describe what you are stuck on..." 
+            className="input w-full"
+            rows={3}
+            value={newThreadContent}
+            onChange={(e) => setNewThreadContent(e.target.value)}
+          />
+          <div className="flex justify-end mt-sm">
+            <button 
+              className="btn btn-primary flex items-center gap-sm"
+              onClick={() => createThread.mutate()}
+              disabled={!newThreadTitle.trim() || !newThreadContent.trim() || createThread.isPending}
+            >
+              <Send size={16} /> Post Question
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Discussion Threads */}

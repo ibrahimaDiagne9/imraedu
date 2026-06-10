@@ -24,6 +24,7 @@ urlpatterns = [
     path('lessons/<int:lesson_id>/discussions/', views.LessonDiscussionView.as_view(), name='lesson_discussions'),
     path('discussions/<int:thread_id>/reply/', views.DiscussionReplyView.as_view(), name='discussion_reply'),
     path('me/', views.CurrentUserView.as_view(), name='current_user'),
+    path('password-change/', views.ChangePasswordView.as_view(), name='password_change'),
     path('password-reset/', views.PasswordResetRequestView.as_view(), name='password_reset'),
     path('password-reset/confirm/', views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('auth/google/', views.GoogleAuthView.as_view(), name='google_auth'),

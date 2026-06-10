@@ -153,6 +153,10 @@ class EnrollmentSerializer(serializers.ModelSerializer):
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_decode
 
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+
 class PasswordResetRequestSerializer(serializers.Serializer):
     email = serializers.EmailField()
 

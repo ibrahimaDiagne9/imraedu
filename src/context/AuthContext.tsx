@@ -7,6 +7,7 @@ interface User {
   username: string;
   email: string;
   first_name: string;
+  bio?: string;
   is_instructor: boolean;
 }
 

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Settings as SettingsIcon, Bell, Shield, Moon, Monitor } from 'lucide-react';
 import SEO from '../components/SEO';
 import { Link } from 'react-router-dom';
+import api from '../api';
 
 const Settings = () => {
   const [activeTab, setActiveTab] = useState<'preferences' | 'security'>('preferences');
@@ -16,20 +17,30 @@ const Settings = () => {
   const [passSaving, setPassSaving] = useState(false);
   const [passMessage, setPassMessage] = useState('');
 
-  const handlePasswordChange = (e: React.FormEvent) => {
+  const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
     if (passwords.new !== passwords.confirm) {
       setPassMessage('New passwords do not match.');
       return;
     }
     setPassSaving(true);
-    // Simulate API call for MVP
-    setTimeout(() => {
-      setPassSaving(false);
+    try {
+      await api.put('/password-change/', {
+        old_password: passwords.current,
+        new_password: passwords.new
+      });
       setPassMessage('Password updated successfully!');
       setPasswords({ current: '', new: '', confirm: '' });
       setTimeout(() => setPassMessage(''), 3000);
-    }, 1000);
+    } catch (err: any) {
+      if (err.response?.data?.old_password) {
+        setPassMessage('Incorrect current password.');
+      } else {
+        setPassMessage('Failed to update password. Please try again.');
+      }
+    } finally {
+      setPassSaving(false);
+    }
   };
 
   const inputStyle: React.CSSProperties = {
